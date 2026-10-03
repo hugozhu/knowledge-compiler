@@ -1,0 +1,5 @@
+# 全部为可选增强：kc 零第三方依赖即可运行（Python 3.12 stdlib）。
+# 安装后对应解析器自动优先启用。
+pymupdf>=1.24         # PDF：优先于 pdftotext
+beautifulsoup4>=4.12  # HTML：优先于 stdlib HTMLParser
+python-docx>=1.1      # DOCX：优先于 zip+regex 兜底

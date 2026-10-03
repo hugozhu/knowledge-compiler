@@ -4,7 +4,7 @@
 
 运行于 [Arduino VENTUNO Q](https://www.arduino.cc/product-ventuno-q)（Qualcomm IQ8275 · Hexagon NPU 40 TOPS）本地节点，原则是 **Local First, Cloud When Needed**：确定性工作交给 CPU，语义抽取交给板上 4B 模型，复杂推理再上云。
 
-**状态：🚧 V0.1 规划完成，代码按 [`docs/v0.1-plan.md`](docs/v0.1-plan.md) 第 7 节顺序实现中。**
+**状态：✅ V0.1 已完成端到端验收（2026-10-03）——`inbox → compile → SQLite/FTS5 → search/ask` 闭环在本机 NPU 上跑通。开发记录见 [Issue #1](https://github.com/hugozhu/knowledge-compiler/issues/1)。**
 
 ---
 

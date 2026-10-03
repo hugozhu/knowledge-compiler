@@ -9,8 +9,9 @@ Personal Knowledge Compiler（V0.1）：把非结构化输入持续编译成可�
 
 ## 项目现状
 
-- 目前只有 `docs/`；**代码尚未开始**。按 `docs/v0.1-plan.md` 第 7 节顺序实现。
-- 不是 git 仓库（可按需 `git init`；`.gitignore` 需排除数据目录与 `__pycache__`）。
+- **V0.1 已实现并端到端验收通过**（2026-10-03，详见 [Issue #1](https://github.com/hugozhu/knowledge-compiler/issues/1) 与 `docs/v0.1-plan.md` 第 7 节状态表）。
+- 数据目录默认 `~/knowledge`（与仓库分离，勿提交）；代码在 `src/kc/`，启动器 `./kc`。
+- NPU 上每批抽取约 1 分钟，20KB 中文文档约 10 分钟——大批量用 `./kc watch` 后台跑。
 
 ## 硬约束（来自本机实测，勿凭经验假设）
 
