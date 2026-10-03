@@ -9,9 +9,10 @@ Personal Knowledge Compiler（V0.1）：把非结构化输入持续编译成可�
 
 ## 项目现状
 
-- **V0.1 已实现并端到端验收通过**（2026-10-03，详见 [Issue #1](https://github.com/hugozhu/knowledge-compiler/issues/1) 与 `docs/v0.1-plan.md` 第 7 节状态表）。
+- **V0.1 / V0.2 均已实现并端到端验收**（2026-10-03，见 [Issue #1](https://github.com/hugozhu/knowledge-compiler/issues/1) / [Issue #2](https://github.com/hugozhu/knowledge-compiler/issues/2) 与 `docs/` 下两份计划的状态表）。
 - 数据目录默认 `~/knowledge`（与仓库分离，勿提交）；代码在 `src/kc/`，启动器 `./kc`。
-- NPU 上每批抽取约 1 分钟，20KB 中文文档约 10 分钟——大批量用 `./kc watch` 后台跑。
+- Schema 用 `PRAGMA user_version` 版本化迁移（当前 v3），旧库自动升级。
+- NPU 吞吐：抽取每批（≤2000 字符）约 1 分钟；判重每 4 条 claim 约 30–60s——大批量用 `./kc watch` 后台跑，或 `--no-dedup` 跳过。
 
 ## 硬约束（来自本机实测，勿凭经验假设）
 

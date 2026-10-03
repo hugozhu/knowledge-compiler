@@ -129,4 +129,62 @@ def connect(db_path: Path) -> sqlite3.Connection:
 
 def init_db(conn: sqlite3.Connection) -> None:
     conn.executescript(SCHEMA)
+    _migrate(conn)
+    conn.commit()
+
+
+# ---------------------------------------------------------------- migrations
+# user_version history:
+#   0 → V0.1 baseline (no embeddings / aliases / claim lifecycle columns)
+#   2 → V0.2: embeddings, entity_aliases, claims.duplicate_of & superseded_reason
+#   3 → V0.2: claims.dedup_checked (incremental dedup bookkeeping)
+MIGRATIONS: dict[int, str] = {
+    2: """
+    CREATE TABLE IF NOT EXISTS embeddings (
+      id          INTEGER PRIMARY KEY,
+      scope       TEXT NOT NULL,
+      ref_id      INTEGER NOT NULL,
+      model       TEXT NOT NULL,
+      dim         INTEGER NOT NULL,
+      vec         BLOB NOT NULL,
+      content_sha TEXT NOT NULL,
+      UNIQUE(scope, ref_id, model)
+    );
+    CREATE INDEX IF NOT EXISTS idx_emb_scope ON embeddings(scope, model);
+
+    CREATE TABLE IF NOT EXISTS entity_aliases (
+      alias_norm TEXT PRIMARY KEY,
+      alias      TEXT NOT NULL,
+      entity_id  INTEGER NOT NULL REFERENCES entities(id) ON DELETE CASCADE
+    );
+    CREATE INDEX IF NOT EXISTS idx_alias_entity ON entity_aliases(entity_id);
+    """,
+    3: """
+    """,
+}
+
+
+def _cols(conn: sqlite3.Connection, table: str) -> set[str]:
+    return {r["name"] for r in conn.execute(f"PRAGMA table_info({table})")}
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    version: int = conn.execute("PRAGMA user_version").fetchone()[0]
+    if version >= max(MIGRATIONS):
+        return
+    for target in sorted(MIGRATIONS):
+        if version < target:
+            conn.executescript(MIGRATIONS[target])
+            if target == 2:  # ALTERs aren't idempotent → guard by column probe
+                for col, ddl in (
+                    ("duplicate_of", "ALTER TABLE claims ADD COLUMN duplicate_of INTEGER"),
+                    ("superseded_reason", "ALTER TABLE claims ADD COLUMN superseded_reason TEXT"),
+                ):
+                    if col not in _cols(conn, "claims"):
+                        conn.execute(ddl)
+            if target == 3:
+                if "dedup_checked" not in _cols(conn, "claims"):
+                    conn.execute("ALTER TABLE claims ADD COLUMN dedup_checked INTEGER DEFAULT 0")
+            conn.execute(f"PRAGMA user_version={target}")
+            version = target
     conn.commit()

@@ -25,6 +25,7 @@ class CompileStats:
     chunks: int = 0
     claims: int = 0
     errors: list = field(default_factory=list)
+    doc_ids: list = field(default_factory=list)
 
 
 class Compiler:
@@ -100,6 +101,7 @@ class Compiler:
                 stats.compiled += 1
                 stats.chunks += res["chunks"]
                 stats.claims += res["claims"]
+                stats.doc_ids.append(res["doc_id"])
             except Exception as e:  # noqa: BLE001
                 stats.failed += 1
                 stats.errors.append(f"{src.name}: {e}")
@@ -249,26 +251,14 @@ class Compiler:
                 (doc_id, c["text"], norm_text(c["text"]), c["type"], c["confidence"], raw_path.name, "active", compiled_at),
             )
         ent_ids: set[int] = set()
+        from .entities import link_mention, resolve_entity
+
         for e in ir.entities:
-            norm = norm_text(e["name"])
-            if not norm:
+            if not norm_text(e["name"]):
                 continue
-            conn.execute(
-                """INSERT INTO entities(name, norm, type) VALUES(?,?,?)
-                   ON CONFLICT(norm) DO UPDATE SET name=excluded.name, type=excluded.type""",
-                (e["name"], norm, e["type"]),
-            )
-            row = conn.execute("SELECT id FROM entities WHERE norm=?", (norm,)).fetchone()
-            conn.execute(
-                "INSERT OR IGNORE INTO entity_mentions(entity_id, document_id) VALUES(?,?)",
-                (row["id"], doc_id),
-            )
-            ent_ids.add(row["id"])
-        for eid in ent_ids:
-            cnt = conn.execute(
-                "SELECT COUNT(*) AS c FROM entity_mentions WHERE entity_id=?", (eid,)
-            ).fetchone()["c"]
-            conn.execute("UPDATE entities SET doc_count=? WHERE id=?", (cnt, eid))
+            eid = resolve_entity(conn, e["name"], e["type"])
+            link_mention(conn, eid, doc_id)
+            ent_ids.add(eid)
         for r in ir.relations:
             conn.execute(
                 "INSERT INTO relations(document_id, subject, predicate, object, confidence) VALUES(?,?,?,?,?)",
