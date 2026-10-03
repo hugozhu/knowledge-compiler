@@ -4,7 +4,7 @@
 
 运行于 [Arduino VENTUNO Q](https://www.arduino.cc/product-ventuno-q)（Qualcomm IQ8275 · Hexagon NPU 40 TOPS）本地节点，原则是 **Local First, Cloud When Needed**：确定性工作交给 CPU，语义抽取交给板上 4B 模型，复杂推理再上云。
 
-**状态：✅ V0.3 已完成端到端验收（2026-10-03）——图谱 / 矛盾巡检 / 演化 / backlinks / digest / remove 全部落地。开发记录见 [Issue #3](https://github.com/hugozhu/knowledge-compiler/issues/3)。**
+**状态：✅ V1.0 已完成端到端验收（2026-10-03）——Context Builder / Memory 层 / Web API / 反馈闭环全部落地，四个版本（V0.1→V1.0）完结。开发记录见 Issues #1–#4。**
 
 ---
 
@@ -56,6 +56,10 @@
 ./kc graph [实体名]                               # 知识图谱概览 / 实体邻域
 ./kc digest [--weekly]                           # 日报/周报（LLM 综合，写入 daily/）
 ./kc remove <doc_id>                             # 删除文档（演化恢复，raw 默认保留）
+./kc note "刚发现 X 的用法值得记下来"              # 随手记 → inbox → 编译回流（反馈闭环）
+./kc memory add "正在做 Y" --kind project --expires 7   # 个人记忆（动态，不进知识）
+./kc context "分析 Z 的产品机会"                   # Context Builder：任务 → 上下文包（--json/--out）
+./kc serve --port 8300                           # Web API：/health /stats /search /ask /context /memory
 ./kc watch                                       # 轮询 inbox 自动编译
 ```
 
@@ -75,13 +79,13 @@
 ./kc test -v       # 逐用例输出
 ```
 
-**72 个用例，15 个文件**，覆盖：
+**101 个用例，17 个文件**，覆盖：
 
 | 层 | 内容 |
 | --- | --- |
 | 单元 | 向量（cosine/topk）、分块（尺寸/覆盖/病态输入）、JSON 鲁棒解析、IR 校验与合并、norm 规范化 |
-| 集成 | Schema 迁移（v0→v3 零丢失）、向量增量回填与孤儿清理、FTS/LIKE/实体跳转/hybrid 检索、ask 引用、rerank 重排、实体归并与别名、判重四态、audit 候选与落库、remove 级联/演化恢复/re-add、graph/evolution、backlinks 幂等、digest 周期收集 |
-| 端到端 | V0.1–V0.3 手工验收的自动化复刻：compile → 增量 → force 重编译 → embed → search → ask → 判重 → backlinks → digest → remove → re-add；图片 OCR 管线；`--no-llm` 确定性路径 |
+| 集成 | Schema 迁移（v0→最新零丢失）、向量增量回填与孤儿清理、FTS/LIKE/实体跳转/hybrid 检索、ask 引用、rerank 重排、实体归并与别名、判重四态、audit 候选与落库、remove 级联/演化恢复/re-add、graph/evolution、backlinks 幂等、digest 周期收集、Memory 生命周期与 ask 注入、Context Pack 结构与预算、Web API 全端点（含 401/404/400） |
+| 端到端 | V0.1–V1.0 手工验收的自动化复刻：compile → 增量 → force 重编译 → embed → search → ask → 判重 → backlinks → digest → remove → re-add；图片 OCR 管线；`--no-llm` 确定性路径；note 反馈闭环 |
 
 所有 LLM 触点用 `FakeLLM` 替身（按 system prompt 路由的确定性响应），测试可随时离线重复执行。
 
@@ -101,10 +105,12 @@ knowledge-compiler/
 
 | 版本 | 内容 |
 | --- | --- |
+| 版本 | 内容 |
+| --- | --- |
 | V0.1 | inbox → parse → chunk → Qwen 抽取 → SQLite+FTS5 → search/ask |
 | V0.2 | Embedding 基建（ngram/OpenAI 可插拔）、Hybrid Search（RRF + entity-hop）、Entity Resolution（别名归并）、Claim 判重（四态 + 演化链）、溯源引用 |
-| **V0.3**（当前） | 知识图谱视图、矛盾巡检（`kc audit`）、知识演化（`kc evolution`）、自动 backlinks（`entities/<type>/`）、日报/周报（`kc digest`）、`kc remove` |
-| V1.0 | Personal Knowledge Agent：Context Builder 闭环（知识 → 上下文 → 行动 → 反馈 → 新知识）+ Memory 层 + Web API |
+| V0.3 | 知识图谱视图、矛盾巡检（`kc audit`）、知识演化（`kc evolution`）、自动 backlinks（`entities/<type>/`）、日报/周报（`kc digest`）、`kc remove` |
+| **V1.0**（当前） | Personal Knowledge Agent：Context Builder（`kc context` 任务上下文包）、Memory 层（`kc memory`，动态可过期）、Web API（`kc serve`）、反馈闭环（`kc note`） |
 
 ## 文档
 

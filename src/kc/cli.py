@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import urllib.request
 from pathlib import Path
@@ -615,6 +616,119 @@ def cmd_test(args) -> int:
     return 0 if result.wasSuccessful() else 1
 
 
+def cmd_memory(args) -> int:
+    cfg = load_config(args.home)
+    conn = _open_db(cfg, create=False)
+    from .memory import KINDS, add_memory, complete_memory, list_memories
+
+    if args.action == "add":
+        try:
+            mem_id = add_memory(
+                conn,
+                args.text,
+                kind=args.kind or "task",
+                source=args.source,
+                expires_days=args.expires,
+            )
+        except ValueError as e:
+            sys.exit(str(e))
+        print(f"✓ memory#{mem_id} [{args.kind}]{f'，{args.expires} 天后过期' if args.expires else ''}")
+        return 0
+
+    if args.action == "done":
+        mem_id = args.mem_id
+        if mem_id is None and args.text is not None:  # `kc memory done 2` 的 text 位兜底
+            try:
+                mem_id = int(args.text)
+            except ValueError:
+                mem_id = None
+        if mem_id is None:
+            sys.exit("用法：kc memory done <编号>")
+        try:
+            complete_memory(conn, mem_id)
+        except ValueError as e:
+            sys.exit(str(e))
+        print(f"✓ memory#{mem_id} 已完成归档")
+        return 0
+
+    # list
+    rows = list_memories(conn, active_only=not args.all, kind=args.kind)
+    if not rows:
+        print("没有记忆" + (f"（kind={args.kind}）" if args.kind else ""))
+        return 0
+    for m in rows:
+        exp = f"  [至 {m['expires_at'][:10]}]" if m["expires_at"] else ""
+        print(f"#{m['id']:<3} [{m['status']}|{m['kind']}] {m['text']}{exp}")
+        print(f"      {m['created_at'][:16]} 更新 {m['updated_at'][:16]}"
+              + (f"  来源：{m['source']}" if m["source"] else ""))
+    return 0
+
+
+def cmd_note(args) -> int:
+    cfg = load_config(args.home)
+    cfg.ensure_dirs()
+    text = (args.text or "").strip()
+    if not text:
+        sys.exit("note 内容不能为空")
+    from datetime import datetime
+
+    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+    title = args.title or "随手记"
+    content = f"# {title}\n\n{text}\n"
+    dest = cfg.dir("inbox") / f"note-{ts}.md"
+    dest.write_text(content, encoding="utf-8")
+    print(f"✓ 已写入 {dest.name}（{len(text)} 字），等待 ./kc compile")
+    return 0
+
+
+def cmd_context(args) -> int:
+    cfg = load_config(args.home)
+    conn = _open_db(cfg, create=False)
+    from .context import build_context
+
+    llm = None
+    if not args.no_llm:
+        cand = _make_llm(cfg)
+        ok, _ = cand.health()
+        if ok:
+            llm = cand
+        else:
+            print("⚠ LLM 不可用，使用确定性关键词（context 仍可生成）")
+    try:
+        result = build_context(
+            conn, llm, args.task, max_chars=args.max_chars, include_memory=not args.no_memory
+        )
+    except ValueError as e:
+        sys.exit(str(e))
+    if args.json:
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    else:
+        print(result["pack"])
+    if args.out:
+        Path(args.out).write_text(result["pack"], encoding="utf-8")
+        print(f"\n（已写入 {args.out}）", file=sys.stderr)
+    s = result["stats"]
+    print(
+        f"（关键词 {len(s['keywords'])} · 实体 {s['entities']} · 论断 {s['claims']} · "
+        f"记忆 {s['memories']} · 来源 {s['sources']} · {s['chars']}/{s['max_chars']} 字符）",
+        file=sys.stderr,
+    )
+    return 0
+
+
+def cmd_serve(args) -> int:
+    cfg = load_config(args.home)
+    cfg.ensure_dirs()
+    from .server import serve_forever
+
+    llm = _make_llm(cfg)
+    ok, info = llm.health()
+    if not ok:
+        print(f"⚠ LLM 不可用（{info}）：/ask /context 关键词将走降级路径，其余端点正常")
+    serve_forever(cfg, llm if ok else llm, args.host, args.port)
+    return 0
+
+
 def cmd_status(args) -> int:
     cfg = load_config(args.home)
     inbox = cfg.dir("inbox")
@@ -785,6 +899,35 @@ def main(argv=None) -> int:
     p = sub.add_parser("test", parents=[common], help="运行自动化测试套件（unittest，离线 FakeLLM）")
     p.add_argument("-v", "--verbose", action="store_true", help="逐用例输出")
     p.set_defaults(func=cmd_test)
+
+    p = sub.add_parser("memory", parents=[common], help="个人记忆（动态状态，非知识，可过期）")
+    p.add_argument("action", choices=["add", "list", "done"])
+    p.add_argument("text", nargs="?", default=None, help="add：记忆内容")
+    p.add_argument("--kind", default=None, help="project/decision/preference/task/discussion/goal（add 默认 task）")
+    p.add_argument("--source", default=None, help="来源标注")
+    p.add_argument("--expires", type=float, default=None, dest="expires", help="N 天后过期")
+    p.add_argument("--all", action="store_true", help="list 含已完成/已过期")
+    p.add_argument("mem_id", nargs="?", type=int, default=None, help="done：记忆编号")
+    p.set_defaults(func=cmd_memory)
+
+    p = sub.add_parser("note", parents=[common], help="随手记（写入 inbox，编译后成为知识）")
+    p.add_argument("text")
+    p.add_argument("--title", default=None, help="标题（默认「随手记」）")
+    p.set_defaults(func=cmd_note)
+
+    p = sub.add_parser("context", parents=[common], help="Context Builder：任务 → Task Context Pack")
+    p.add_argument("task")
+    p.add_argument("--max-chars", type=int, default=6000, dest="max_chars")
+    p.add_argument("--out", default=None, help="写入文件")
+    p.add_argument("--json", action="store_true", help="输出机器可读 JSON（pack+stats）")
+    p.add_argument("--no-memory", action="store_true", help="不注入个人记忆")
+    p.add_argument("--no-llm", action="store_true", help="不用 LLM 提关键词（纯确定性）")
+    p.set_defaults(func=cmd_context)
+
+    p = sub.add_parser("serve", parents=[common], help="Web API（本地知识节点服务）")
+    p.add_argument("--host", default="127.0.0.1")
+    p.add_argument("--port", type=int, default=8300)
+    p.set_defaults(func=cmd_serve)
 
     p = sub.add_parser("status", parents=[common], help="inbox 与库状态")
     p.set_defaults(func=cmd_status)

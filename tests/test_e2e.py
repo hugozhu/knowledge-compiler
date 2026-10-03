@@ -92,6 +92,30 @@ class TestEndToEnd(KCTestCase):
         self.assertEqual(stats.claims, 0)
         self.assertGreaterEqual(self.count("SELECT COUNT(*) FROM chunks"), 1)
 
+    def test_note_feedback_loop(self):
+        """kc note → inbox → compile → 知识回流（反馈闭环）。"""
+        from kc.context import build_context
+        from kc.memory import add_memory, list_memories
+
+        # note（低摩擦随手记）
+        note_text = "观察：实体页的自动生成让 backlinks 维护成本为零。"
+        (self.cfg.dir("inbox") / "note-20261003-120000.md").write_text(
+            f"# 随手记\n\n{note_text}\n", encoding="utf-8"
+        )
+        stats = self.compile(FakeLLM())
+        self.assertEqual(stats.compiled, 1)
+        self.assertGreaterEqual(stats.claims, 1)  # 随手记编译成知识
+
+        # memory（动态状态）与知识分离
+        add_memory(self.conn, "正在验证 V1.0 闭环", kind="task")
+        self.assertEqual(len(list_memories(self.conn)), 1)
+        self.assertEqual(self.count("SELECT COUNT(*) FROM memories"), 1)
+
+        # context 打包含知识 + 记忆
+        res = build_context(self.conn, FakeLLM(), "backlinks 维护成本")
+        self.assertEqual(res["stats"]["memories"], 1)
+        self.assertGreaterEqual(res["stats"]["claims"] + res["stats"]["sources"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

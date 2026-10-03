@@ -28,8 +28,8 @@ class TestDb(unittest.TestCase):
                 dbmod.init_db(conn)
                 conn.close()
 
-    def test_migration_v0_to_v3(self):
-        """模拟 V0.1 旧库（仅 SCHEMA、user_version=0）→ 自动迁移到 v3 且数据不丢。"""
+    def test_migration_v0_to_latest(self):
+        """模拟 V0.1 旧库（仅 SCHEMA、user_version=0）→ 自动迁移到最新版且数据不丢。"""
         with tempfile.TemporaryDirectory() as td:
             p = Path(td) / "old.db"
             c1 = sqlite3.connect(p)
@@ -42,9 +42,13 @@ class TestDb(unittest.TestCase):
 
             c2 = dbmod.connect(p)
             dbmod.init_db(c2)
-            self.assertEqual(c2.execute("PRAGMA user_version").fetchone()[0], 3)
+            latest = max(dbmod.MIGRATIONS)
+            self.assertEqual(c2.execute("PRAGMA user_version").fetchone()[0], latest)
             cols = {r["name"] for r in c2.execute("PRAGMA table_info(claims)")}
             self.assertTrue({"duplicate_of", "superseded_reason", "dedup_checked"} <= cols)
+            tables = {r[0] for r in c2.execute(
+                "SELECT name FROM sqlite_master WHERE type='table'")}
+            self.assertIn("memories", tables)
             self.assertEqual(c2.execute("SELECT COUNT(*) FROM claims").fetchone()[0], 1)
             self.assertEqual(c2.execute("SELECT COUNT(*) FROM documents").fetchone()[0], 1)
             c2.close()

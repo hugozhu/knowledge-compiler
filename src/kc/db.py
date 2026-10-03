@@ -117,10 +117,10 @@ END;
 """
 
 
-def connect(db_path: Path) -> sqlite3.Connection:
+def connect(db_path: Path, check_same_thread: bool = True) -> sqlite3.Connection:
     db_path = Path(db_path)
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(str(db_path))
+    conn = sqlite3.connect(str(db_path), check_same_thread=check_same_thread)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys=ON")
     conn.execute("PRAGMA journal_mode=WAL")
@@ -138,6 +138,7 @@ def init_db(conn: sqlite3.Connection) -> None:
 #   0 → V0.1 baseline (no embeddings / aliases / claim lifecycle columns)
 #   2 → V0.2: embeddings, entity_aliases, claims.duplicate_of & superseded_reason
 #   3 → V0.2: claims.dedup_checked (incremental dedup bookkeeping)
+#   4 → V1.0: memories (dynamic personal context, proposal §13)
 MIGRATIONS: dict[int, str] = {
     2: """
     CREATE TABLE IF NOT EXISTS embeddings (
@@ -160,6 +161,20 @@ MIGRATIONS: dict[int, str] = {
     CREATE INDEX IF NOT EXISTS idx_alias_entity ON entity_aliases(entity_id);
     """,
     3: """
+    """,
+    4: """
+    CREATE TABLE IF NOT EXISTS memories (
+      id         INTEGER PRIMARY KEY,
+      kind       TEXT NOT NULL DEFAULT 'task',
+      text       TEXT NOT NULL,
+      source     TEXT,
+      confidence REAL DEFAULT 0.8,
+      status     TEXT DEFAULT 'active',
+      created_at TEXT,
+      updated_at TEXT,
+      expires_at TEXT
+    );
+    CREATE INDEX IF NOT EXISTS idx_memories_status ON memories(status, kind);
     """,
 }
 

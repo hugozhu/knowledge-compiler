@@ -15,12 +15,14 @@ import re
 import sqlite3
 
 from .llm import LLM, LLMUnavailable
+from .memory import active_for_context
 from .util import extract_json
 from .vectors import embed_ngram, topk
 
 ASK_SYSTEM = (
     "你是个人知识库问答助手。只依据提供的资料回答；引用资料时标注 [编号]；"
-    "资料中没有相关内容就直说没有。回答使用中文，简洁。"
+    "资料中没有相关内容就直说没有。「个人记忆」是你的用户当前的个人状态（非知识），"
+    "回答时可结合但不要当作事实引用。回答使用中文，简洁。"
 )
 
 KEYWORD_SYSTEM = "你是检索查询优化器。只输出检索关键词，不要任何解释。"
@@ -116,13 +118,18 @@ def _like_refs(conn, table: str, query: str, limit: int, scope: str) -> list[tup
     return [(scope, r["id"]) for r in scored[:limit]]
 
 
-def _vector_refs(conn, query: str, limit: int) -> list[tuple[str, int]]:
+def _vector_refs(conn, query: str, limit: int, scope: str) -> list[tuple[str, int]]:
     if not _tokens(query):
         return []
     qvec = embed_ngram(query)
     out: list[tuple[str, int]] = []
-    for scope, table in (("chunk", "chunks"), ("claim", "claims")):
-        if scope == "claim":
+    targets = (("chunk", "chunks"), ("claim", "claims"))
+    if scope == "chunks":
+        targets = (("chunk", "chunks"),)
+    elif scope == "claims":
+        targets = (("claim", "claims"),)
+    for kind_name, table in targets:
+        if kind_name == "claim":
             rows = conn.execute(
                 """SELECT e.ref_id, e.vec FROM embeddings e
                    JOIN claims c ON c.id = e.ref_id
@@ -135,7 +142,7 @@ def _vector_refs(conn, query: str, limit: int) -> list[tuple[str, int]]:
         if not rows:
             continue
         cands = [(r[0], r[1]) for r in rows]
-        out.extend((scope, cid) for _, cid in topk(qvec, cands, limit))
+        out.extend((kind_name, cid) for _, cid in topk(qvec, cands, limit))
     return out
 
 
@@ -228,8 +235,12 @@ def _hybrid_search(conn, query: str, limit: int, scope: str) -> list[dict]:
     if scope in ("all", "claims"):
         like_refs.extend(_like_refs(conn, "claims", query, limit, "claim"))
     channels.append(like_refs)
-    channels.append(_vector_refs(conn, query, limit))
-    channels.append(_entity_hop_refs(conn, query, limit))
+    channels.append(_vector_refs(conn, query, limit, scope))
+    hop: list[tuple[str, int]] = []
+    for ref in _entity_hop_refs(conn, query, limit):
+        if scope == "all" or ref[0] == scope.rstrip("s"):
+            hop.append(ref)
+    channels.append(hop)
 
     rrf: dict[tuple[str, int], float] = {}
     for channel in channels:
@@ -300,6 +311,7 @@ def ask(
     limit: int = 6,
     max_context_chars: int = 3500,
     rerank_top: int | None = None,
+    include_memory: bool = True,
 ) -> dict | None:
     kws = llm_keywords(llm, question)
     if not kws:
@@ -307,9 +319,10 @@ def ask(
     hits = search(conn, " ".join(kws), limit=limit * 2, mode="hybrid") if kws else []
     if not hits:  # last resort: verbatim substring search of the raw question
         hits = search(conn, question, limit=limit * 2, mode="hybrid")
-    if not hits:
+    memories = active_for_context(conn) if include_memory else []
+    if not hits and not memories:
         return None
-    if rerank_top:
+    if rerank_top and hits:
         hits = rerank(llm, question, hits, top_n=rerank_top)
     else:
         hits = hits[:limit]
@@ -327,6 +340,24 @@ def ask(
         total += len(entry)
         sources.append(h)
     context = "\n\n".join(lines)
-    user = f"问题：{question}\n\n资料：\n{context}\n\n请依据以上资料回答，引用标注 [编号]。"
+    memory_block = ""
+    if memories:
+        mlines = [
+            f"- [{m['kind']}|{m['created_at'][:10]}"
+            + (f"|至{m['expires_at'][:10]}" if m["expires_at"] else "")
+            + f"] {m['text']}"
+            for m in memories
+        ]
+        memory_block = "\n\n个人记忆（动态状态，非知识）：\n" + "\n".join(mlines)
+    user = (
+        f"问题：{question}\n\n资料：\n{context if context else '（无相关资料）'}"
+        f"{memory_block}\n\n请依据以上资料回答，引用标注 [编号]。"
+    )
     answer = llm.chat(ASK_SYSTEM, user, temperature=0.3, max_tokens=512)
-    return {"answer": answer.strip(), "sources": sources, "context_chars": total, "keywords": kws}
+    return {
+        "answer": answer.strip(),
+        "sources": sources,
+        "context_chars": total,
+        "keywords": kws,
+        "memories": [dict(m) for m in memories],
+    }
