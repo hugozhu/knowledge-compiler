@@ -189,7 +189,10 @@ knowledge-compiler/
 ## 文档
 
 - [`docs/personal-knowledge-base-best-practices.md`](docs/personal-knowledge-base-best-practices.md) — 总体提案（设计权威）
-- [`docs/v0.1-plan.md`](docs/v0.1-plan.md) — V0.1 范围、Schema、验收标准
+- [`docs/v0.1-plan.md`](docs/v0.1-plan.md) — V0.1 计划：最小闭环（inbox → compile → SQLite/FTS5 → search/ask）
+- [`docs/v0.2-plan.md`](docs/v0.2-plan.md) — V0.2 计划：Embedding / Hybrid 检索 / 实体归并 / Claim 判重
+- [`docs/v0.3-plan.md`](docs/v0.3-plan.md) — V0.3 计划：图谱 / 矛盾巡检 / 演化 / backlinks / digest / remove
+- [`docs/v1.0-plan.md`](docs/v1.0-plan.md) — V1.0 计划：Context Builder / Memory 层 / Web API / 反馈闭环
 - [`AGENTS.md`](AGENTS.md) — 本机硬约束与协作约定
 
 ## 相关项目
