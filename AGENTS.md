@@ -54,5 +54,5 @@ curl -s http://127.0.0.1:8300/health   # 确认知识库服务在线
 ## 环境备忘
 
 - 模型服务由 `~/Projects/qwen-server/ctl.sh` 管理（start/stop/status/logs）；它挂了先重启它，不要绕过。
-- 大文件下载走 SOCKS5 `192.168.3.1:11081`；`huggingface.co` 不通（用 hf-mirror / ModelScope）。
+- 大文件下载走局域网 SOCKS5 代理（网关上的，具体地址见本机私有备忘）；`huggingface.co` 不通（用 hf-mirror / ModelScope）。
 - **不要升级 Ubuntu 26.04**（官方确认与本板不兼容）。
