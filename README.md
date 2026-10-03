@@ -4,7 +4,7 @@
 
 运行于 [Arduino VENTUNO Q](https://www.arduino.cc/product-ventuno-q)（Qualcomm IQ8275 · Hexagon NPU 40 TOPS）本地节点，原则是 **Local First, Cloud When Needed**：确定性工作交给 CPU，语义抽取交给板上 4B 模型，复杂推理再上云。
 
-**状态：✅ V0.2 已完成端到端验收（2026-10-03）——Embedding 基建 / Hybrid 检索(RRF) / 实体归并 / Claim 判重演化 / 溯源引用 全部落地。开发记录见 [Issue #1](https://github.com/hugozhu/knowledge-compiler/issues/1) 与 [Issue #2](https://github.com/hugozhu/knowledge-compiler/issues/2)。**
+**状态：✅ V0.3 已完成端到端验收（2026-10-03）——图谱 / 矛盾巡检 / 演化 / backlinks / digest / remove 全部落地。开发记录见 [Issue #3](https://github.com/hugozhu/knowledge-compiler/issues/3)。**
 
 ---
 
@@ -44,13 +44,18 @@
 ```bash
 ./kc init                                        # 建 ~/knowledge 目录与 index.db
 ./kc add article.pdf                             # 放进 inbox（低摩擦）
-./kc compile                                     # inbox → parse → chunk → LLM 抽取 → SQLite/FTS5（+判重/向量）
+./kc compile                                     # inbox → parse → chunk → LLM 抽取 → SQLite/FTS5（+判重/向量/实体页）
 ./kc embed                                       # 增量回填向量（编译后自动执行）
 ./kc search "FTS5 中文检索"                       # hybrid：FTS+LIKE+向量+实体 四路 RRF（--mode fts 对照）
 ./kc search "..." --rerank                       # 可选：LLM 对候选重排
 ./kc ask "这份文档认为个人知识库的核心是什么？"     # 带来源引用的问答
 ./kc entities --suggest                          # LLM 实体归并建议 → entities --merge <A> <B>
 ./kc dedup --dry-run                             # claim 判重候选预览（四态：重复/更新/矛盾/全新）
+./kc audit [--apply]                             # 存量矛盾巡检（--apply 落演化链）
+./kc evolution                                   # 知识演化链视图（观点如何变化）
+./kc graph [实体名]                               # 知识图谱概览 / 实体邻域
+./kc digest [--weekly]                           # 日报/周报（LLM 综合，写入 daily/）
+./kc remove <doc_id>                             # 删除文档（演化恢复，raw 默认保留）
 ./kc watch                                       # 轮询 inbox 自动编译
 ```
 
@@ -79,10 +84,10 @@ knowledge-compiler/
 
 | 版本 | 内容 |
 | --- | --- |
-| **V0.1** | inbox → parse → chunk → Qwen 抽取 → SQLite+FTS5 → search/ask |
-| **V0.2**（当前） | Embedding 基建（ngram/OpenAI 可插拔）、Hybrid Search（RRF + entity-hop）、Entity Resolution（别名归并）、Claim 判重（四态 + 演化链）、溯源引用 |
-| V0.3 | Knowledge Graph、矛盾自动巡检、知识演化视图、Automatic backlinks、Daily digest / Weekly synthesis、`kc remove` |
-| V1.0 | Personal Knowledge Agent：Context Builder 闭环（知识 → 上下文 → 行动 → 反馈 → 新知识） |
+| V0.1 | inbox → parse → chunk → Qwen 抽取 → SQLite+FTS5 → search/ask |
+| V0.2 | Embedding 基建（ngram/OpenAI 可插拔）、Hybrid Search（RRF + entity-hop）、Entity Resolution（别名归并）、Claim 判重（四态 + 演化链）、溯源引用 |
+| **V0.3**（当前） | 知识图谱视图、矛盾巡检（`kc audit`）、知识演化（`kc evolution`）、自动 backlinks（`entities/<type>/`）、日报/周报（`kc digest`）、`kc remove` |
+| V1.0 | Personal Knowledge Agent：Context Builder 闭环（知识 → 上下文 → 行动 → 反馈 → 新知识）+ Memory 层 + Web API |
 
 ## 文档
 

@@ -9,10 +9,11 @@ Personal Knowledge Compiler（V0.1）：把非结构化输入持续编译成可�
 
 ## 项目现状
 
-- **V0.1 / V0.2 均已实现并端到端验收**（2026-10-03，见 [Issue #1](https://github.com/hugozhu/knowledge-compiler/issues/1) / [Issue #2](https://github.com/hugozhu/knowledge-compiler/issues/2) 与 `docs/` 下两份计划的状态表）。
+- **V0.1 / V0.2 / V0.3 均已实现并端到端验收**（2026-10-03，见 Issues #1–#3 与 `docs/` 下三份计划的状态表）。
 - 数据目录默认 `~/knowledge`（与仓库分离，勿提交）；代码在 `src/kc/`，启动器 `./kc`。
 - Schema 用 `PRAGMA user_version` 版本化迁移（当前 v3），旧库自动升级。
-- NPU 吞吐：抽取每批（≤2000 字符）约 1 分钟；判重每 4 条 claim 约 30–60s——大批量用 `./kc watch` 后台跑，或 `--no-dedup` 跳过。
+- `entities/<type>/` 与 `daily/` 是生成器产物（确定性视图），归 `kc backlinks` / `kc digest` 所有，勿手改。
+- NPU 吞吐：抽取每批（≤2000 字符）约 1 分钟；判重/巡检每 4 条约 30–60s——大批量用 `./kc watch` 后台跑，或 `--no-dedup` / `--no-backlinks` 跳过对应阶段。
 
 ## 硬约束（来自本机实测，勿凭经验假设）
 

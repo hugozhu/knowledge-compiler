@@ -136,6 +136,13 @@ def cmd_compile(args) -> int:
             backfill(conn, provider, progress=_progress)
         except Exception as e:  # noqa: BLE001
             print(f"⚠ 向量回填失败（不影响编译结果）：{e}")
+    if not args.no_backlinks and stats.compiled:
+        try:
+            from .backlinks import generate_all
+
+            generate_all(conn, cfg, progress=_progress)
+        except Exception as e:  # noqa: BLE001
+            print(f"⚠ 实体页生成失败（不影响编译结果）：{e}")
     if stats.failed:
         print("提示：运行 ./kc compile --all 可重试失败项（含 raw 中未完成的）")
     return 0 if stats.failed == 0 else 1
@@ -327,6 +334,16 @@ def cmd_entities(args) -> int:
     return 0
 
 
+def cmd_backlinks(args) -> int:
+    cfg = load_config(args.home)
+    conn = _open_db(cfg, create=False)
+    from .backlinks import generate_all
+
+    result = generate_all(conn, cfg, progress=lambda m: print(m))
+    print(f"完成：{result['pages']} 个实体页 → {cfg.dir('entities')}/")
+    return 0
+
+
 def cmd_dedup(args) -> int:
     cfg = load_config(args.home)
     conn = _open_db(cfg, create=False)
@@ -364,6 +381,223 @@ def cmd_dedup(args) -> int:
         f"判重完成：new {stats['new']}，duplicate {stats['duplicate']}，"
         f"update {stats['update']}，contradiction {stats['contradiction']}"
     )
+    return 0
+
+
+def cmd_remove(args) -> int:
+    cfg = load_config(args.home)
+    conn = _open_db(cfg, create=False)
+    from .lifecycle import remove_document
+
+    try:
+        result = remove_document(
+            conn, cfg, args.doc_id, purge_raw=args.purge_raw,
+            progress=lambda m: print(f"  {m}"),
+        )
+    except ValueError as e:
+        sys.exit(str(e))
+    print(
+        f"✓ 已删除 {result['doc_id']}「{result['title']}」："
+        f"恢复跨文档 claim {result['restored']} 条，回收孤儿实体 {len(result['orphan_entities'])} 个"
+        + ("，raw 已清除" if not result["raw_kept"] else "，raw 保留")
+    )
+    for name in result["orphan_entities"]:
+        print(f"    - {name}")
+    return 0
+
+
+def cmd_graph(args) -> int:
+    cfg = load_config(args.home)
+    conn = _open_db(cfg, create=False)
+    from . import graph
+
+    if not args.name:
+        o = graph.overview(conn)
+        print(
+            f"知识图谱概览：{o['entities']} 实体 / {o['relations']} 关系 / "
+            f"{o['active_claims']} 活跃论断（superseded {o['superseded']}，duplicate {o['duplicates']}）/ "
+            f"{o['documents']} 文档"
+        )
+        if o["predicates"]:
+            print("\n关系谓词 Top：" + "，".join(f"{p}×{c}" for p, c in o["predicates"]))
+        if o["degree"]:
+            print("\n关系连接度 Top：")
+            for name, c in o["degree"]:
+                print(f"  {name}（{c} 条边）")
+        if o["top_entities"]:
+            print("\n文档覆盖 Top 实体：")
+            for name, dc in o["top_entities"]:
+                print(f"  {name}（{dc} docs）")
+        return 0
+
+    ent = graph.resolve(conn, args.name)
+    if ent is None:
+        sys.exit(f"未找到实体「{args.name}」")
+    nb = graph.neighborhood(conn, ent)
+    e = nb["entity"]
+    alias = f"（别名：{' / '.join(nb['aliases'])}）" if nb["aliases"] else ""
+    print(f"{e['name']}  #{e['id']}  [{e['type']}]  docs={e['doc_count']} {alias}")
+    if nb["out_rels"]:
+        print("\n关系（出边）：")
+        for s, p, o in nb["out_rels"]:
+            print(f"  {s} --{p}--> {o}")
+    if nb["in_rels"]:
+        print("\n关系（入边）：")
+        for s, p, o in nb["in_rels"]:
+            print(f"  {s} --{p}--> {o}")
+    if nb["co_mentions"]:
+        print("\n共现实体：" + "，".join(f"{n}({d})" for n, d in nb["co_mentions"]))
+    if nb["docs"]:
+        print("\n提及文档：")
+        for did, title in nb["docs"]:
+            print(f"  {did}  {title[:60]}")
+    if nb["claims"]:
+        print("\n相关论断：")
+        for cid, ctype, conf, text, title in nb["claims"]:
+            print(f"  #{cid} [{ctype}|{conf}] {text[:70]}")
+            print(f"      ↳ {title[:50]}")
+    return 0
+
+
+def cmd_evolution(args) -> int:
+    cfg = load_config(args.home)
+    conn = _open_db(cfg, create=False)
+
+    def claim_row(cid: int):
+        return conn.execute(
+            """SELECT cl.id, cl.text, cl.status, cl.superseded_by, cl.superseded_reason,
+                      cl.created_at, d.title FROM claims cl
+               JOIN documents d ON d.id=cl.document_id WHERE cl.id=?""",
+            (cid,),
+        ).fetchone()
+
+    if args.claim_id:
+        row = claim_row(args.claim_id)
+        if not row:
+            sys.exit(f"未找到 claim#{args.claim_id}")
+        chain = [row]
+        while chain[-1]["superseded_by"]:
+            nxt = claim_row(chain[-1]["superseded_by"])
+            if not nxt:
+                break
+            chain.append(nxt)
+        print(f"claim#{args.claim_id} 演化链：\n")
+        for i, c in enumerate(chain):
+            mark = "（已失效）" if c["status"] != "active" else "（当前有效）"
+            print(f"  {'└─ ' if i else ''}#{c['id']} [{c['created_at'][:10]}] {c['text']}")
+            if i and chain[i - 1]["superseded_reason"]:
+                print(f"      理由：{chain[i - 1]['superseded_reason']}")
+            print(f"      来源：{c['title'][:50]} {mark}")
+        return 0
+
+    supers = conn.execute(
+        """SELECT cl.id, cl.text, cl.superseded_by, cl.superseded_reason, cl.created_at, d.title
+           FROM claims cl JOIN documents d ON d.id=cl.document_id
+           WHERE cl.status='superseded' ORDER BY cl.id"""
+    ).fetchall()
+    dups = conn.execute(
+        """SELECT cl.id, cl.text, cl.duplicate_of, d.title FROM claims cl
+           JOIN documents d ON d.id=cl.document_id
+           WHERE cl.status='duplicate' ORDER BY cl.id"""
+    ).fetchall()
+    if not supers and not dups:
+        print("暂无知识演化记录（还没有 claim 被取代或判重）。")
+        print("产生演化的方式：编译含矛盾观点的文档（自动判重）或运行 ./kc audit --apply")
+        return 0
+    if supers:
+        print(f"知识演化（{len(supers)} 条 superseded 链）：\n")
+        for c in supers:
+            nxt = claim_row(c["superseded_by"]) if c["superseded_by"] else None
+            print(f"◆ #{c['id']}「{c['text'][:50]}…」({c['title'][:30]}, {c['created_at'][:10]})")
+            if nxt:
+                print(f"   └─[{nxt['title'][:30]}] # {nxt['id']}「{nxt['text'][:50]}…」")
+            if c["superseded_reason"]:
+                print(f"      理由：{c['superseded_reason']}")
+    if dups:
+        if supers:
+            print()
+        print(f"重复记录（{len(dups)} 条 duplicate）：")
+        for c in dups:
+            tgt = claim_row(c["duplicate_of"]) if c["duplicate_of"] else None
+            tgt_txt = f" ≡ #{tgt['id']}「{tgt['text'][:40]}…」" if tgt else ""
+            print(f"  #{c['id']}「{c['text'][:40]}…」{tgt_txt}")
+    return 0
+
+
+def cmd_audit(args) -> int:
+    cfg = load_config(args.home)
+    conn = _open_db(cfg, create=False)
+    from .audit import apply_verdicts, candidate_pairs, judge_pairs
+
+    pairs = candidate_pairs(conn, threshold=args.threshold, max_pairs=args.max_pairs)
+    if not pairs:
+        print(f"没有相似度 ≥ {args.threshold} 的论断对，无需巡检。")
+        return 0
+    print(f"候选论断对：{len(pairs)}（cosine ≥ {args.threshold}）")
+    if args.dry_run:
+        for p in pairs:
+            print(f"  [{p['score']}] #{p['a']}「{p['a_text'][:45]}…」 vs #{p['b']}「{p['b_text'][:45]}…」")
+        return 0
+
+    llm = _make_llm(cfg)
+    ok, info = llm.health()
+    if not ok:
+        sys.exit(f"audit 需要 LLM 服务在线（{info}）；--dry-run 可离线看候选")
+
+    def _progress(msg: str) -> None:
+        print(msg, flush=True)
+
+    print(f"LLM 判定（{len(pairs)} 对，4 对/批）…")
+    verdicts = judge_pairs(llm, pairs)
+    for p, v in zip(pairs, verdicts):
+        mark = {"contradiction": "⚡矛盾", "duplicate": "≡重复", "consistent": "✓一致", "unrelated": "·无关"}[v["verdict"]]
+        print(f"  {mark} [{p['score']}] #{p['a']} vs #{p['b']}" + (f"（{v['reason']}）" if v["reason"] else ""))
+    if args.apply:
+        stats = apply_verdicts(conn, pairs, verdicts, progress=_progress)
+        print(
+            f"已落库：矛盾 {stats['contradiction']}，重复 {stats['duplicate']}，"
+            f"一致 {stats['consistent']}，无关 {stats['unrelated']}（详见 ./kc evolution）"
+        )
+    else:
+        n_c = sum(1 for v in verdicts if v["verdict"] == "contradiction")
+        n_d = sum(1 for v in verdicts if v["verdict"] == "duplicate")
+        print(f"报告模式（未写库）：矛盾 {n_c}，重复 {n_d}。加 --apply 落库。")
+    return 0
+
+
+def cmd_digest(args) -> int:
+    cfg = load_config(args.home)
+    conn = _open_db(cfg, create=False)
+    from .digest import generate
+
+    if args.dry_run:
+        from .digest import _period, collect_period
+
+        label, since, until = _period("weekly" if args.weekly else "daily", args.date)
+        data = collect_period(conn, since, until)
+        print(f"周期 {label}（{since} ~ {until}）："
+              f"新增文档 {len(data['docs'])}，活跃论断 {len(data['claims'])}，"
+              f"被取代 {len(data['superseded'])}")
+        for did, title, _ in data["docs"][:10]:
+            print(f"  - {did} {title[:50]}")
+        return 0
+
+    llm = _make_llm(cfg)
+    ok, info = llm.health()
+    if not ok:
+        sys.exit(f"digest 需要 LLM 服务在线（{info}）")
+
+    result = generate(
+        cfg, conn, llm, weekly=args.weekly, date=args.date,
+        compile_flag=args.compile, progress=lambda m: print(m),
+    )
+    if result is None:
+        print("生成失败")
+        return 1
+    if result.get("empty"):
+        print(f"周期 {result['label']} 内没有新增内容，未生成报告。")
+        return 0
+    print(f"完成：{result['path']}（文档 {result['docs']}，论断 {result['claims']}）")
     return 0
 
 
@@ -431,6 +665,13 @@ def cmd_watch(args) -> int:
                 )
                 for e in stats.errors:
                     print(f"  ✗ {e}")
+                if stats.compiled:
+                    try:
+                        from .backlinks import generate_all
+
+                        generate_all(conn, cfg, progress=_progress)
+                    except Exception as e:  # noqa: BLE001
+                        print(f"  ⚠ 实体页生成失败：{e}")
             _time.sleep(args.interval)
     except KeyboardInterrupt:
         print("\n退出 watch")
@@ -461,6 +702,7 @@ def main(argv=None) -> int:
     p.add_argument("--ocr-pages", type=int, default=10, help="扫描 PDF OCR 的最大页数")
     p.add_argument("--no-embed", action="store_true", help="编译后不回填向量")
     p.add_argument("--no-dedup", action="store_true", help="编译后不对新 claims 做判重")
+    p.add_argument("--no-backlinks", action="store_true", help="编译后不刷新实体页")
     p.set_defaults(func=cmd_compile)
 
     p = sub.add_parser("embed", parents=[common], help="增量回填向量（chunk/claim）")
@@ -492,9 +734,39 @@ def main(argv=None) -> int:
     p.add_argument("--merge", nargs=2, type=int, metavar=("目标ID", "来源ID"), help="把来源实体并入目标")
     p.set_defaults(func=cmd_entities)
 
+    p = sub.add_parser("backlinks", parents=[common], help="重新生成实体反向链接页")
+    p.set_defaults(func=cmd_backlinks)
+
     p = sub.add_parser("dedup", parents=[common], help="对未检查的 claims 做判重（四态）")
     p.add_argument("--dry-run", action="store_true", help="只展示相似候选，不调用 LLM、不写库")
     p.set_defaults(func=cmd_dedup)
+
+    p = sub.add_parser("remove", parents=[common], help="删除文档（级联+演化恢复；raw 默认保留）")
+    p.add_argument("doc_id")
+    p.add_argument("--purge-raw", action="store_true", help="同时删除 raw 原件（覆盖 immutable 默认）")
+    p.set_defaults(func=cmd_remove)
+
+    p = sub.add_parser("graph", parents=[common], help="知识图谱概览 / 实体邻域")
+    p.add_argument("name", nargs="?", default=None, help="实体名或别名（缺省为全局概览）")
+    p.set_defaults(func=cmd_graph)
+
+    p = sub.add_parser("evolution", parents=[common], help="知识演化链视图")
+    p.add_argument("claim_id", nargs="?", type=int, default=None, help="只看指定 claim 的链")
+    p.set_defaults(func=cmd_evolution)
+
+    p = sub.add_parser("audit", parents=[common], help="矛盾巡检（存量 claims 两两审查）")
+    p.add_argument("--apply", action="store_true", help="把矛盾/重复判定落库（形成演化链）")
+    p.add_argument("--threshold", type=float, default=0.3, help="cosine 候选阈值（默认 0.3）")
+    p.add_argument("--max-pairs", type=int, default=50, help="最多送 LLM 的论断对数")
+    p.add_argument("--dry-run", action="store_true", help="只列候选对，不调 LLM 不写库")
+    p.set_defaults(func=cmd_audit)
+
+    p = sub.add_parser("digest", parents=[common], help="生成日报/周报（LLM 综合）")
+    p.add_argument("--weekly", action="store_true", help="周报（默认日报）")
+    p.add_argument("--date", default=None, help="指定日期 YYYY-MM-DD（默认今天）")
+    p.add_argument("--dry-run", action="store_true", help="只统计周期内容，不调 LLM")
+    p.add_argument("--compile", action="store_true", help="把报告复制进 inbox 喂回知识库")
+    p.set_defaults(func=cmd_digest)
 
     p = sub.add_parser("status", parents=[common], help="inbox 与库状态")
     p.set_defaults(func=cmd_status)
