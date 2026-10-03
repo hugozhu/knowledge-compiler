@@ -137,6 +137,14 @@ def merge_irs(parts: list[IR]) -> IR:
 
 SYSTEM_EXTRACT = "你是知识编译器的语义抽取模块。只输出一个 JSON 对象，不要任何解释、不要 Markdown 代码块。"
 
+# 解析失败时的兜底：小模型输出超 max_tokens 会被截断成非法 JSON，
+# 用严格限额重试一次，把输出压进预算内。
+COMPACT_LIMITS = (
+    "严格限制输出规模（必须适配小模型上下文）：summary 不超过 2 句；"
+    "topics 最多 3 个；entities 最多 4 个；claims 最多 4 条（每条不超过 30 字）；"
+    "relations 最多 3 条。只输出 JSON 对象本身。"
+)
+
 
 def extraction_user_prompt(batch_text: str) -> str:
     return f"""阅读下面的文本，抽取结构化知识。只输出一个 JSON 对象，字段：
@@ -156,17 +164,24 @@ def extraction_user_prompt(batch_text: str) -> str:
 
 
 def extract_ir(llm: LLM, batch_text: str, retries: int = 1) -> IR:
-    """One extraction call with one retry; degrades to empty IR, never raises."""
+    """One extraction call with retries; degrades to empty IR, never raises.
+
+    尝试顺序：常规提示 →（可重试）仅 JSON 提示 → 严格限额提示。最后一步专治
+    「模型输出过长被 max_tokens 截断 → 非法 JSON」——空数组/正常输出不受影响。
+    """
     prompt = extraction_user_prompt(batch_text)
+    attempts = [prompt]
+    for _ in range(max(retries, 0)):
+        attempts.append("只输出 JSON 对象本身，不要任何其他文字。\n" + prompt)
+    attempts.append(prompt + "\n\n" + COMPACT_LIMITS)
     last_err = ""
-    for _ in range(retries + 1):
+    for p in attempts:
         try:
-            content = llm.chat(SYSTEM_EXTRACT, prompt, temperature=0.2, max_tokens=768)
+            content = llm.chat(SYSTEM_EXTRACT, p, temperature=0.2, max_tokens=768)
         except LLMUnavailable:
             raise  # service-level failure → caller decides degradation
         raw = extract_json(content)
         if raw is not None:
             return coerce_ir(raw)
         last_err = (content or "")[:80]
-        prompt = "只输出 JSON 对象本身，不要任何其他文字。\n" + prompt
     return IR(summary=f"[extract-failed] {last_err}")

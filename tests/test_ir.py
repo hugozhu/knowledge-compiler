@@ -63,6 +63,25 @@ class TestExtract(unittest.TestCase):
         self.assertEqual(ir.claims, [])
         self.assertIn("extract-failed", ir.summary)
 
+    def test_compact_retry_recovers_from_truncation(self):
+        """输出被 max_tokens 截断成非法 JSON 时，严格限额重试应恢复成功。"""
+        seen = []
+
+        class Truncating(FakeLLM):
+            def chat(self, system, user, **kw):
+                seen.append(user)
+                if "严格限制输出规模" in user:
+                    return (
+                        '{"summary":"紧凑摘要",'
+                        '"claims":[{"text":"紧凑论断","type":"fact","confidence":0.9}]}'
+                    )
+                return '{"summary": "被截断", "claims": [{"text"'  # 截断 → 非法 JSON
+
+        ir = extract_ir(Truncating(), "任意文本")
+        self.assertEqual(len(seen), 3)  # 2 次常规 + 1 次紧凑
+        self.assertEqual(ir.summary, "紧凑摘要")
+        self.assertEqual(ir.claims[0]["text"], "紧凑论断")
+
 
 if __name__ == "__main__":
     unittest.main()
