@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# 本地数据目录（若 KC_HOME 指到仓库内）
+knowledge/
+*.db
+*.db-wal
+*.db-shm
+
+# 运行时
+.run/
+*.log
+*.pid
+
+# 临时文件
+/tmp/
+.DS_Store
