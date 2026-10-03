@@ -31,6 +31,7 @@ Personal Knowledge Compiler（V0.1）：把非结构化输入持续编译成可�
 - 幂等：`init`/`compile` 重复执行安全；增量以 `compile_log.sha256` 为准；重编译先级联删再插。
 - LLM 输出一律走鲁棒 JSON 解析 + 失败重试一次 + 降级（仅摘要/`--no-llm` 路径），任何模型故障不得阻塞确定性编译。
 - CLI 子命令与行为以 `docs/v0.1-plan.md` 第 5 节为准；新增命令先改计划再写码。
+- **新功能必须附测试**（`tests/`，用 `tests/support.py` 的 FakeLLM/KCTestCase，禁真实网络与 NPU 依赖）；任何改动后 `./kc test` 须全绿再提交。
 
 ## 常用命令
 
@@ -39,6 +40,7 @@ Personal Knowledge Compiler（V0.1）：把非结构化输入持续编译成可�
 ./kc search "Claim"            # FTS 路径
 ./kc search "知识库"            # LIKE 兜底路径
 ./kc ask "这份文档的核心观点是什么？"
+./kc test                      # 自动化测试套件（离线 FakeLLM，改代码后必跑）
 curl -s http://127.0.0.1:8080/health   # 确认模型服务在线
 ```
 

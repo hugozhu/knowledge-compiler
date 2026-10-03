@@ -601,6 +601,20 @@ def cmd_digest(args) -> int:
     return 0
 
 
+def cmd_test(args) -> int:
+    import unittest
+
+    root = Path(__file__).resolve().parents[2]
+    tests_dir = root / "tests"
+    if not tests_dir.is_dir():
+        sys.exit(f"未找到测试目录：{tests_dir}")
+    loader = unittest.TestLoader()
+    suite = loader.discover(str(tests_dir), top_level_dir=str(root))
+    runner = unittest.TextTestRunner(verbosity=2 if args.verbose else 1)
+    result = runner.run(suite)
+    return 0 if result.wasSuccessful() else 1
+
+
 def cmd_status(args) -> int:
     cfg = load_config(args.home)
     inbox = cfg.dir("inbox")
@@ -767,6 +781,10 @@ def main(argv=None) -> int:
     p.add_argument("--dry-run", action="store_true", help="只统计周期内容，不调 LLM")
     p.add_argument("--compile", action="store_true", help="把报告复制进 inbox 喂回知识库")
     p.set_defaults(func=cmd_digest)
+
+    p = sub.add_parser("test", parents=[common], help="运行自动化测试套件（unittest，离线 FakeLLM）")
+    p.add_argument("-v", "--verbose", action="store_true", help="逐用例输出")
+    p.set_defaults(func=cmd_test)
 
     p = sub.add_parser("status", parents=[common], help="inbox 与库状态")
     p.set_defaults(func=cmd_status)

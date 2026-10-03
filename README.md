@@ -68,6 +68,23 @@
 | `KC_LLM_API_KEY` | `sk-local` | 端点鉴权 |
 | `KC_LLM_MODEL` / `KC_LLM_VLM_MODEL` | `qwen3-4b` / `qwen3-vl-4b` | 文本抽取 / OCR 模型 |
 
+## 测试
+
+```bash
+./kc test          # 全套自动化测试（unittest + FakeLLM 离线替身，约 17s，不依赖 NPU 服务）
+./kc test -v       # 逐用例输出
+```
+
+**72 个用例，15 个文件**，覆盖：
+
+| 层 | 内容 |
+| --- | --- |
+| 单元 | 向量（cosine/topk）、分块（尺寸/覆盖/病态输入）、JSON 鲁棒解析、IR 校验与合并、norm 规范化 |
+| 集成 | Schema 迁移（v0→v3 零丢失）、向量增量回填与孤儿清理、FTS/LIKE/实体跳转/hybrid 检索、ask 引用、rerank 重排、实体归并与别名、判重四态、audit 候选与落库、remove 级联/演化恢复/re-add、graph/evolution、backlinks 幂等、digest 周期收集 |
+| 端到端 | V0.1–V0.3 手工验收的自动化复刻：compile → 增量 → force 重编译 → embed → search → ask → 判重 → backlinks → digest → remove → re-add；图片 OCR 管线；`--no-llm` 确定性路径 |
+
+所有 LLM 触点用 `FakeLLM` 替身（按 system prompt 路由的确定性响应），测试可随时离线重复执行。
+
 ## 代码布局（规划）
 
 ```text
