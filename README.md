@@ -72,22 +72,79 @@
 | `KC_LLM_API_KEY` | `sk-local` | 端点鉴权 |
 | `KC_LLM_MODEL` / `KC_LLM_VLM_MODEL` | `qwen3-4b` / `qwen3-vl-4b` | 文本抽取 / OCR 模型 |
 
-## 接入 OpenCode（MCP）
+## 在 OpenCode 中使用（MCP 接入）
 
-知识库已作为 MCP 服务器接入 OpenCode，任何会话可直接调用（`opencode mcp add kc --global -- ~/Projects/knowledge-compiler/kc mcp` 已配置）：
+OpenCode 通过 MCP 把知识库当上下文源。架构：
 
-```text
-tools.kc.context(task, max_chars)   # 任务 → 上下文包（研究/执行前的推荐入口）
-tools.kc.search(query, limit, scope) # 秒回检索（FTS+LIKE+向量+实体，无 LLM）
-tools.kc.ask(question)              # 本地模型问答（慢，~1-2 分钟，带来源）
-tools.kc.stats() / memory_list() / memory_add()
+```
+OpenCode 会话（任意项目）
+    ↓ tools.kc.* 工具调用
+kc mcp（stdio JSON-RPC 适配器，OpenCode 按需启动）
+    ↓ 代理到 REST API
+kc serve :8300（唯一事实源：SQLite + NPU 模型）
 ```
 
-依赖：`kc serve` 需在后台运行（MCP 是它的 stdio 代理）：
+### 一次性配置
+
+```bash
+# 1. 注册 MCP 服务器（全局，所有项目可用；已在本机配置过）
+opencode mcp add kc --global -- /home/arduino/Projects/knowledge-compiler/kc mcp
+
+# 2. 验证连接（应显示 ✓ kc connected）
+opencode mcp list
+```
+
+对应写入 `~/.config/opencode/opencode.jsonc` 的配置（手工配置等价形式）：
+
+```jsonc
+{
+  "mcp": {
+    "servers": {
+      "kc": {
+        "type": "local",
+        "command": ["/home/arduino/Projects/knowledge-compiler/kc", "mcp"],
+      },
+    },
+  },
+}
+```
+
+### 运行依赖
+
+`kc mcp` 是 `kc serve` 的 stdio 代理，**serve 需在后台运行**：
 
 ```bash
 cd ~/Projects/knowledge-compiler && nohup ./kc serve --port 8300 >/dev/null 2>&1 &
+curl -s http://127.0.0.1:8300/health   # 确认在线
 ```
+
+serve 没跑也不报错崩溃——工具会返回带启动指引的提示，拉起后即可恢复。
+
+### 会话内可用的 6 个工具
+
+| 工具 | 用途 | 速度 |
+| --- | --- | --- |
+| `kc.context(task, max_chars?)` | **任务 → 上下文包**：关键词 → 实体 → 相关论断 → 原文摘录 → 个人记忆，预算内组装带 Sources 的 Markdown。研究/执行任务前的推荐入口 | ~30–60s（NPU 关键词） |
+| `kc.search(query, limit?, scope?)` | hybrid 检索论断/原文（FTS+LIKE+向量+实体） | 秒回 |
+| `kc.ask(question)` | 本地 NPU 模型问答，带来源引用 | ~1–2 分钟 |
+| `kc.stats()` | 知识库统计（文档/论断/实体/向量/记忆） | 秒回 |
+| `kc.memory_list(kind?)` | 列出活跃的个人记忆（动态状态） | 秒回 |
+| `kc.memory_add(text, kind?, expires_days?)` | 记录个人记忆（可过期，不进知识库） | 秒回 |
+
+### 使用方式
+
+无需手工操作——OpenCode 的 Agent 会按工具描述自动选用（`context` 开工、`search` 精确检索、`ask` 综合回答）。想显式引导，直接在对话里说：
+
+> 用 kc 的 context 工具，帮我整理「XXX」的相关背景
+
+会话内用 `/mcps` 可查看连接状态；CLI 用 `opencode mcp list`。
+
+### 环境变量（可选）
+
+| 变量 | 默认 | 说明 |
+| --- | --- | --- |
+| `KC_BASE_URL` | `http://127.0.0.1:8300` | MCP 代理目标（serve 地址） |
+| `KC_API_KEY` | 空 | serve 开了 Bearer 鉴权时传入 |
 
 ## 测试
 
