@@ -729,6 +729,13 @@ def cmd_serve(args) -> int:
     return 0
 
 
+def cmd_mcp(args) -> int:
+    """MCP stdio 服务器：stdout 只输出 JSON-RPC，绝不能有其他打印。"""
+    from .mcp import serve_stdio
+
+    return serve_stdio()
+
+
 def cmd_status(args) -> int:
     cfg = load_config(args.home)
     inbox = cfg.dir("inbox")
@@ -928,6 +935,9 @@ def main(argv=None) -> int:
     p.add_argument("--host", default="127.0.0.1")
     p.add_argument("--port", type=int, default=8300)
     p.set_defaults(func=cmd_serve)
+
+    p = sub.add_parser("mcp", help="MCP stdio 服务器（代理到 kc serve，供 OpenCode 等 MCP 客户端使用）")
+    p.set_defaults(func=cmd_mcp)
 
     p = sub.add_parser("status", parents=[common], help="inbox 与库状态")
     p.set_defaults(func=cmd_status)

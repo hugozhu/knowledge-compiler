@@ -45,9 +45,20 @@ class TestBuildContext(KCTestCase):
         self.assertGreater(stats["chars"], 400)
 
     def test_budget_respected(self):
-        res = build_context(self.conn, self.fake, "知识库检索方案", max_chars=2000)
-        self.assertLessEqual(res["stats"]["chars"], 2000 + 600)  # 正文预算 + 尾部 Sources
-        self.assertEqual(res["stats"]["max_chars"], 2000)
+        # 多文档多 chunk 场景（真实库规模才暴露摘录循环的预算 bug）
+        for i in range(4):
+            self.write_inbox(
+                f"d{i}.md",
+                f"# 文档{i}\n\n" + f"关于知识库检索的第{i}篇补充材料，内容各不相同。" * 30,
+            )
+            self.compile(llm=self.fake)
+        small = build_context(self.conn, self.fake, "知识库检索", max_chars=1500)
+        big = build_context(self.conn, self.fake, "知识库检索", max_chars=6000)
+        # 正文预算 + 尾部 Sources/固定头部余量
+        self.assertLessEqual(small["stats"]["chars"], 1500 + 700)
+        self.assertLessEqual(big["stats"]["chars"], 6000 + 700)
+        # 预算应影响实际产出（比例性）
+        self.assertGreater(big["stats"]["chars"], small["stats"]["chars"])
 
     def test_no_memory_flag(self):
         add_memory(self.conn, "不该出现", kind="task")

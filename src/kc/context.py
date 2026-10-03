@@ -107,8 +107,9 @@ def build_context(
             lines.append(f"- [{m['kind']}|{m['created_at'][:10]}{exp}] {m['text']}")
         lines.append("")
         block = "\n".join(lines)
-        sections.append(block)
-        used += len(block)
+        if used + len(block) <= max_chars:  # 预算不够则整段跳过
+            sections.append(block)
+            used += len(block)
 
     if entities:
         lines = ["## 关键实体", ""]
@@ -117,8 +118,9 @@ def build_context(
             lines.append(f"- {e['name']} [{e['type']}]，{e['doc_count']} docs{alias}")
         lines.append("")
         block = "\n".join(lines)
-        sections.append(block)
-        used += len(block)
+        if used + len(block) <= max_chars:
+            sections.append(block)
+            used += len(block)
 
     claim_budget = int(max_chars * CLAIM_BUDGET_SHARE)
     if claim_hits:
@@ -138,19 +140,21 @@ def build_context(
 
     if chunk_hits:
         lines = ["## 原文摘录", ""]
+        block_used = sum(len(x) + 1 for x in lines)
         for h in chunk_hits:
             text = h["text"].replace("\n", " ")
             if len(text) > 400:
                 text = text[:400] + "…"
             entry = f"- [s{h['id']}] {text}"
-            if used + len(entry) + 20 > max_chars:
-                break
+            if used + block_used + len(entry) + 20 > max_chars:
+                break  # 摘录是最可裁的部分：预算尽即止
             lines.append(entry)
+            block_used += len(entry) + 1
             src_ids.setdefault(h["document_id"], h["title"] or h["document_id"])
         if len(lines) > 2:
             lines.append("")
             sections.append("\n".join(lines))
-            used += sum(len(x) + 1 for x in lines)
+            used += block_used
 
     sources = ["## Sources", ""]
     sources.append("论断编号 [cN] 对应上述文档；摘录编号 [sN] 为 chunk id。")

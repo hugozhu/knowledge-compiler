@@ -14,6 +14,7 @@ Personal Knowledge Compiler（V0.1）：把非结构化输入持续编译成可�
 - Schema 用 `PRAGMA user_version` 版本化迁移（当前 v4：memories），旧库自动升级。
 - `entities/<type>/` 与 `daily/` 是生成器产物（确定性视图），归 `kc backlinks` / `kc digest` 所有，勿手改。
 - Web API：`./kc serve`（默认 127.0.0.1:8300，`KC_API_KEY` 可选 Bearer 鉴权）。
+- **OpenCode MCP 接入**：全局配置已加 `kc` 服务器（`kc mcp` stdio 适配器，代理到 serve 的 REST API）。本会话的 `tools.kc.*` 即来自它；serve 挂了工具会返回带启动指引的错误而非崩溃。
 - NPU 吞吐：抽取每批（≤2000 字符）约 1 分钟；判重/巡检每 4 条约 30–60s——大批量用 `./kc watch` 后台跑，或 `--no-dedup` / `--no-backlinks` 跳过对应阶段。
 
 ## 硬约束（来自本机实测，勿凭经验假设）
@@ -42,7 +43,8 @@ Personal Knowledge Compiler（V0.1）：把非结构化输入持续编译成可�
 ./kc search "知识库"            # LIKE 兜底路径
 ./kc ask "这份文档的核心观点是什么？"
 ./kc test                      # 自动化测试套件（离线 FakeLLM，改代码后必跑）
-curl -s http://127.0.0.1:8080/health   # 确认模型服务在线
+nohup ./kc serve --port 8300 & # Web API（OpenCode 的 kc MCP 工具依赖它）
+curl -s http://127.0.0.1:8300/health   # 确认知识库服务在线
 ```
 
 ## 完成定义

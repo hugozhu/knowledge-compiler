@@ -72,6 +72,23 @@
 | `KC_LLM_API_KEY` | `sk-local` | 端点鉴权 |
 | `KC_LLM_MODEL` / `KC_LLM_VLM_MODEL` | `qwen3-4b` / `qwen3-vl-4b` | 文本抽取 / OCR 模型 |
 
+## 接入 OpenCode（MCP）
+
+知识库已作为 MCP 服务器接入 OpenCode，任何会话可直接调用（`opencode mcp add kc --global -- ~/Projects/knowledge-compiler/kc mcp` 已配置）：
+
+```text
+tools.kc.context(task, max_chars)   # 任务 → 上下文包（研究/执行前的推荐入口）
+tools.kc.search(query, limit, scope) # 秒回检索（FTS+LIKE+向量+实体，无 LLM）
+tools.kc.ask(question)              # 本地模型问答（慢，~1-2 分钟，带来源）
+tools.kc.stats() / memory_list() / memory_add()
+```
+
+依赖：`kc serve` 需在后台运行（MCP 是它的 stdio 代理）：
+
+```bash
+cd ~/Projects/knowledge-compiler && nohup ./kc serve --port 8300 >/dev/null 2>&1 &
+```
+
 ## 测试
 
 ```bash
@@ -79,12 +96,12 @@
 ./kc test -v       # 逐用例输出
 ```
 
-**101 个用例，17 个文件**，覆盖：
+**110 个用例，18 个文件**，覆盖：
 
 | 层 | 内容 |
 | --- | --- |
 | 单元 | 向量（cosine/topk）、分块（尺寸/覆盖/病态输入）、JSON 鲁棒解析、IR 校验与合并、norm 规范化 |
-| 集成 | Schema 迁移（v0→最新零丢失）、向量增量回填与孤儿清理、FTS/LIKE/实体跳转/hybrid 检索、ask 引用、rerank 重排、实体归并与别名、判重四态、audit 候选与落库、remove 级联/演化恢复/re-add、graph/evolution、backlinks 幂等、digest 周期收集、Memory 生命周期与 ask 注入、Context Pack 结构与预算、Web API 全端点（含 401/404/400） |
+| 集成 | Schema 迁移（v0→最新零丢失）、向量增量回填与孤儿清理、FTS/LIKE/实体跳转/hybrid 检索、ask 引用、rerank 重排、实体归并与别名、判重四态、audit 候选与落库、remove 级联/演化恢复/re-add、graph/evolution、backlinks 幂等、digest 周期收集、Memory 生命周期与 ask 注入、Context Pack 结构与预算（多文档比例性）、Web API 全端点（含 401/404/400）、MCP stdio 协议（握手/工具清单/全部工具/错误恢复/serve 宕机友好提示） |
 | 端到端 | V0.1–V1.0 手工验收的自动化复刻：compile → 增量 → force 重编译 → embed → search → ask → 判重 → backlinks → digest → remove → re-add；图片 OCR 管线；`--no-llm` 确定性路径；note 反馈闭环 |
 
 所有 LLM 触点用 `FakeLLM` 替身（按 system prompt 路由的确定性响应），测试可随时离线重复执行。
