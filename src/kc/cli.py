@@ -666,17 +666,12 @@ def cmd_memory(args) -> int:
 
 def cmd_note(args) -> int:
     cfg = load_config(args.home)
-    cfg.ensure_dirs()
     text = (args.text or "").strip()
     if not text:
         sys.exit("note 内容不能为空")
-    from datetime import datetime
+    from .note import write_note
 
-    ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-    title = args.title or "随手记"
-    content = f"# {title}\n\n{text}\n"
-    dest = cfg.dir("inbox") / f"note-{ts}.md"
-    dest.write_text(content, encoding="utf-8")
+    dest = write_note(cfg, text, title=args.title)
     print(f"✓ 已写入 {dest.name}（{len(text)} 字），等待 ./kc compile")
     return 0
 

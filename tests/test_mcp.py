@@ -83,7 +83,9 @@ class TestMcpStdio(KCTestCase):
         self._send("notifications/initialized", notify=True)
         r = self._send("tools/list")
         names = {t["name"] for t in r["result"]["tools"]}
-        self.assertEqual(names, {"context", "search", "ask", "stats", "memory_list", "memory_add"})
+        self.assertEqual(
+            names, {"context", "search", "ask", "stats", "memory_list", "memory_add", "note"}
+        )
 
     def test_search_tool(self):
         self._send("initialize", {"protocolVersion": "2025-06-18"})
@@ -119,6 +121,26 @@ class TestMcpStdio(KCTestCase):
         self._send("initialize", {"protocolVersion": "2025-06-18"})
         r = self._call("stats", {})
         self.assertIn("documents", r["result"]["content"][0]["text"])
+
+    def test_note_tool_writes_and_compiles(self):
+        self._send("initialize", {"protocolVersion": "2025-06-18"})
+        r = self._call("note", {"text": "MCP 对话式加知识 NOTEZZQ", "title": "MCP 笔记"})
+        payload = r["result"]
+        self.assertNotIn("isError", payload)
+        self.assertIn("已加入知识库", payload["content"][0]["text"])
+        # 编译进库后应可检索到
+        r = self._call("search", {"query": "NOTEZZQ"})
+        self.assertIn("NOTEZZQ", r["result"]["content"][0]["text"])
+
+    def test_note_tool_inbox_only(self):
+        self._send("initialize", {"protocolVersion": "2025-06-18"})
+        r = self._call("note", {"text": "仅入 inbox", "compile": False})
+        self.assertIn("已写入 inbox", r["result"]["content"][0]["text"])
+
+    def test_note_tool_missing_text_is_error(self):
+        self._send("initialize", {"protocolVersion": "2025-06-18"})
+        r = self._call("note", {"text": ""})
+        self.assertTrue(r["result"]["isError"])
 
     def test_unknown_method_returns_error(self):
         self._send("initialize", {"protocolVersion": "2025-06-18"})

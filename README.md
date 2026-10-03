@@ -59,7 +59,7 @@
 ./kc note "刚发现 X 的用法值得记下来"              # 随手记 → inbox → 编译回流（反馈闭环）
 ./kc memory add "正在做 Y" --kind project --expires 7   # 个人记忆（动态，不进知识）
 ./kc context "分析 Z 的产品机会"                   # Context Builder：任务 → 上下文包（--json/--out）
-./kc serve --port 8300                           # Web API：/health /stats /search /ask /context /memory
+./kc serve --port 8300                           # Web API：/health /stats /search /ask /context /memory /note
 ./kc watch                                       # 轮询 inbox 自动编译
 ```
 
@@ -120,22 +120,25 @@ curl -s http://127.0.0.1:8300/health   # 确认在线
 
 serve 没跑也不报错崩溃——工具会返回带启动指引的提示，拉起后即可恢复。
 
-### 会话内可用的 6 个工具
+### 会话内可用的 7 个工具
 
 | 工具 | 用途 | 速度 |
 | --- | --- | --- |
 | `kc.context(task, max_chars?)` | **任务 → 上下文包**：关键词 → 实体 → 相关论断 → 原文摘录 → 个人记忆，预算内组装带 Sources 的 Markdown。研究/执行任务前的推荐入口 | ~30–60s（NPU 关键词） |
 | `kc.search(query, limit?, scope?)` | hybrid 检索论断/原文（FTS+LIKE+向量+实体） | 秒回 |
 | `kc.ask(question)` | 本地 NPU 模型问答，带来源引用 | ~1–2 分钟 |
+| `kc.note(text, title?, compile?)` | **对话式加知识**：写入知识库并编译为可检索的 chunks/claims（默认立即编译；`compile=false` 仅入 inbox） | 秒回（仅 inbox）/ ~1 分钟（编译） |
 | `kc.stats()` | 知识库统计（文档/论断/实体/向量/记忆） | 秒回 |
 | `kc.memory_list(kind?)` | 列出活跃的个人记忆（动态状态） | 秒回 |
 | `kc.memory_add(text, kind?, expires_days?)` | 记录个人记忆（可过期，不进知识库） | 秒回 |
 
 ### 使用方式
 
-无需手工操作——OpenCode 的 Agent 会按工具描述自动选用（`context` 开工、`search` 精确检索、`ask` 综合回答）。想显式引导，直接在对话里说：
+无需手工操作——OpenCode 的 Agent 会按工具描述自动选用（`context` 开工、`search` 精确检索、`ask` 综合回答、`note` 对话式加知识）。想显式引导，直接在对话里说：
 
 > 用 kc 的 context 工具，帮我整理「XXX」的相关背景
+
+> 用 kc 记下这条：XXX（会写入知识库并编译，之后可被检索）
 
 会话内用 `/mcps` 可查看连接状态；CLI 用 `opencode mcp list`。
 

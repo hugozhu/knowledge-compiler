@@ -7,6 +7,7 @@
     POST /context           {"task","max_chars"?,"include_memory"?}
     GET  /memory?all=1&kind=
     POST /memory            {"text","kind"?,"expires_days"?,"source"?}
+    POST /note              {"text","title"?,"compile"?}
 
 Auth: KC_API_KEY env → require `Authorization: Bearer <key>` (default: none,
 loopback binding). SQLite is opened with check_same_thread=False; writes are
@@ -22,10 +23,13 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
 from . import db as dbmod
+from .compiler import Compiler
 from .context import build_context
 from .llm import LLM, LLMUnavailable
 from .memory import KINDS, add_memory, list_memories
+from .note import write_note
 from .retrieve import ask, search
+from .util import sha256_file
 
 
 class _Router:
@@ -169,6 +173,30 @@ def make_handler(router: _Router):
                             expires_days=body.get("expires_days"),
                         )
                     return self._send(200, {"id": mem_id, "kind": kind, "text": text})
+                if url.path == "/note":
+                    text = str(body.get("text") or "").strip()
+                    if not text:
+                        return self._send(400, {"error": "missing text"})
+                    title = str(body.get("title") or "").strip() or None
+                    do_compile = bool(body.get("compile", True))
+                    with router.lock:
+                        dest = write_note(router.cfg, text, title=title)
+                        doc_id = sha256_file(dest)[:16]
+                        result = {"note": dest.name, "doc_id": doc_id, "compiled": False, "stats": None}
+                        if do_compile:
+                            comp = Compiler(router.cfg, router.conn, router.llm)
+                            st = comp.compile_pending(use_llm=router.llm is not None)
+                            result["compiled"] = st.compiled > 0
+                            result["stats"] = {
+                                "scanned": st.scanned,
+                                "compiled": st.compiled,
+                                "skipped": st.skipped,
+                                "failed": st.failed,
+                                "chunks": st.chunks,
+                                "claims": st.claims,
+                                "errors": st.errors,
+                            }
+                    return self._send(200, result)
                 return self._send(404, {"error": f"no route {url.path}"})
             except LLMUnavailable as e:
                 return self._send(503, {"error": f"llm unavailable: {e}"})
@@ -190,7 +218,7 @@ def serve_forever(cfg, llm: LLM | None, host: str, port: int) -> None:
     dbmod.init_db(conn)
     srv = make_server(cfg, conn, llm, host, port)
     print(f"kc serve → http://{host}:{port}（API key: {'on' if os.environ.get('KC_API_KEY') else 'off'}）")
-    print("routes: GET /health /stats /search?q= /memory · POST /ask /context /memory")
+    print("routes: GET /health /stats /search?q= /memory · POST /ask /context /memory /note")
     try:
         srv.serve_forever()
     except KeyboardInterrupt:

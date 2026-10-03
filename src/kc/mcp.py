@@ -98,12 +98,34 @@ TOOLS = [
             "required": ["text"],
         },
     },
+    {
+        "name": "note",
+        "description": (
+            "对话式加知识：把一条内容/随手记写入个人知识库并编译为可检索的 "
+            "chunks/claims（与 memory_add 不同，这是真正的知识，会进入检索）。"
+            "默认立即编译（本地 NPU 抽取，较慢约 1 分钟）；传 compile=false 仅写入 inbox。"
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "text": {"type": "string", "description": "要记下的知识内容"},
+                "title": {"type": "string", "description": "可选标题（默认「随手记」）"},
+                "compile": {
+                    "type": "boolean",
+                    "default": True,
+                    "description": "是否立即编译入库（默认 true）",
+                },
+            },
+            "required": ["text"],
+        },
+    },
 ]
 
 INSTRUCTIONS = (
     "个人知识库 knowledge-compiler（VENTUNO Q 本地节点）。"
     "研究类任务先用 context 取上下文包；search 秒回适合精确检索；"
     "ask 走本地模型较慢（约 1-2 分钟），仅在需要综合回答时用；"
+    "note 把新知识对话式写入并编译入库；"
     "memory_* 维护用户的动态个人状态。所有知识均带来源可追溯。"
 )
 
@@ -233,6 +255,29 @@ def dispatch(name: str, args: dict) -> str:
             payload["expires_days"] = args["expires_days"]
         out = _request("POST", "/memory", payload, timeout=FAST_TIMEOUT)
         return f"✓ memory#{out.get('id')} [{out.get('kind')}] {out.get('text')}"
+
+    if name == "note":
+        text = str(args.get("text") or "").strip()
+        if not text:
+            raise ToolError("参数 text 不能为空")
+        payload: dict = {"text": text}
+        if args.get("title"):
+            payload["title"] = str(args["title"])
+        if args.get("compile") is not None:
+            payload["compile"] = bool(args["compile"])
+        out = _request("POST", "/note", payload, timeout=SLOW_TIMEOUT)
+        note_name = out.get("note")
+        if out.get("stats") is None:
+            return f"✓ 已写入 inbox：{note_name}（等待 ./kc compile）"
+        if out.get("compiled"):
+            st = out["stats"]
+            return (
+                f"✓ 已加入知识库：{note_name} → doc {out.get('doc_id')}"
+                f"（chunks {st.get('chunks')}，claims {st.get('claims')}）"
+            )
+        st = out["stats"]
+        detail = "；".join(st.get("errors") or []) or "无新内容"
+        return f"⚠ 已写入 inbox（{note_name}），但编译未产出（{detail}）"
 
     raise ToolError(f"未知工具 {name!r}")
 

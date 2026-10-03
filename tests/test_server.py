@@ -87,6 +87,26 @@ class TestServer(KCTestCase):
             self.post("/memory", {"text": "x", "kind": "bogus"})
         self.assertEqual(cm.exception.code, 400)
 
+    def test_note_compiles_and_is_searchable(self):
+        out = self.post("/note", {"text": "新增知识标记 NOTEZZQ：对话式加知识已打通。", "title": "对话笔记"})
+        self.assertTrue(out["compiled"])
+        self.assertTrue(out["doc_id"])
+        self.assertEqual(out["stats"]["compiled"], 1)
+        self.assertGreaterEqual(out["stats"]["claims"], 1)
+        hits = self.get("/search?q=NOTEZZQ")
+        self.assertTrue(hits["hits"])
+
+    def test_note_inbox_only_when_compile_false(self):
+        out = self.post("/note", {"text": "仅入 inbox 的内容", "compile": False})
+        self.assertFalse(out["compiled"])
+        self.assertIsNone(out["stats"])
+        self.assertTrue((self.cfg.dir("inbox") / out["note"]).exists())
+
+    def test_note_missing_text(self):
+        with self.assertRaises(urllib.error.HTTPError) as cm:
+            self.post("/note", {"text": "   "})
+        self.assertEqual(cm.exception.code, 400)
+
     def test_404(self):
         with self.assertRaises(urllib.error.HTTPError) as cm:
             self.get("/nope")
