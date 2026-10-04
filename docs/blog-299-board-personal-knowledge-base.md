@@ -2,7 +2,7 @@
 
 > 当 Muse 们把助理跑在云上，你的数据该放在哪里？
 
-> 项目地址：**https://github.com/hugozhu/knowledge-compiler**
+> 项目地址：**[https://github.com/hugozhu/knowledge-compiler](https://github.com/hugozhu/knowledge-compiler)**
 
 ## 一、Muse 很火，但火的方向有点让人不安
 
@@ -37,7 +37,7 @@
 
 ## 三、工程实践：一台能跑起来的知识编译器
 
-我把它实现成了开源项目 **knowledge-compiler**（https://github.com/hugozhu/knowledge-compiler），并让它跑在这块板子上：
+我把它实现成了开源项目 **knowledge-compiler**（[https://github.com/hugozhu/knowledge-compiler](https://github.com/hugozhu/knowledge-compiler)），并让它跑在这块板子上：
 
 ```
 inbox → parse → chunk → 本地 4B 模型抽取 → SQLite + FTS5
@@ -84,7 +84,7 @@ inbox → parse → chunk → 本地 4B 模型抽取 → SQLite + FTS5
 **够用。** 对"常驻个人知识节点"这个场景，299 美金的板子能撑起知识编译、检索和日常问答；复杂长文推理再交给云端——这正是 Local First 的意义。
 
 完整代码、对照实验脚本与数据都在这里：
-**https://github.com/hugozhu/knowledge-compiler**
+**[https://github.com/hugozhu/knowledge-compiler](https://github.com/hugozhu/knowledge-compiler)**
 
 Muse 代表的是"能力上云"的极致效率；而下一波一定会有人做"数据留本地"的对照版本。这块 40 TOPS 的板子告诉我：**这一天，可能比想象中来得更快。**
 
