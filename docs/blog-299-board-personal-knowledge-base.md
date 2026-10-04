@@ -90,6 +90,42 @@ Muse 代表的是"能力上云"的极致效率；而下一波一定会有人做"
 
 ---
 
+## 附录 A：语料原文
+
+本文的编译与评测基于我自己的两篇长文（均发布于 hugozhu.site）：
+
+- [《Agent = Model + Harness：从 Anthropic Managed Agents 看 Agent 架构演进》](https://hugozhu.site/post/2026/178-agent-model-plus-harness/)（下称「文章一」，约 1.6 万字）
+- [《Loop Engineering：AI Agent 工程的第五层》](https://hugozhu.site/post/2026/263-loop-engineering/)（下称「文章二」，约 0.7 万字；正文引用了文章一，因此能测跨文档综合）
+
+## 附录 B：评测集（14 题）
+
+评测集覆盖精确检索、语义检索、实体、跨文档综合、事实、多跳、Context Builder 与负样本（防幻觉）八类。每题都带**期望命中文档**与**参考答案要点**，完整机器可读版（含 `expected_facts` / `gold_answer`）见仓库。
+
+| # | 类别 | 问题 | 期望命中 |
+| --- | --- | --- | --- |
+| S01 | 精确检索 | Codex 的 `/goal` 有哪五个状态？ | 文章二 |
+| S02 | 精确检索 | Anthropic Managed Agents 解耦后的三个核心接口是什么？ | 文章一 |
+| S03 | 语义检索 | 为什么针对旧模型写的 workaround 最终会变成死代码？ | 文章一 |
+| S04 | 语义检索 | Agent 长时间自主运行会出现哪两个致命问题？ | 文章二 |
+| S05 | 实体 | 设计 Agent Harness 的五个原则是什么？ | 文章一 |
+| S06 | 实体 | Ralph Loop 的核心观点是谁提出的？原话大意是什么？ | 文章二 |
+| S07 | 跨文档 | Loop Engineering 和 Harness Engineering 是什么关系？ | 文章一 + 文章二 |
+| S08 | 跨文档 | Agent = Model + Harness 公式与 Loop Engineering 如何互相补充？ | 文章一 + 文章二 |
+| S09 | 事实 | 解耦 Harness 和 Sandbox 后，TTFT 指标改善了多少？ | 文章一 |
+| S10 | 事实 | 钉钉差旅报销 Loop 案例的投入产出比是多少？ | 文章二 |
+| S11 | 多跳 | Codex 用什么机制防止 proxy signal collapse？ | 文章二 |
+| S12 | Context | 为「在 VENTUNO Q 上设计一个本地优先的 Agent Harness」准备背景资料 | 文章一 + 文章二 |
+| S13 | 负样本 | 如何用 Airflow 配置 DAG 的调度重试策略？ | 无（应明确拒答） |
+| S14 | 负样本 | Transformer 多头注意力机制的计算复杂度是 O(n²·d) 吗？ | 无（应明确拒答） |
+
+**相关文件（仓库内）**
+
+- 完整评测集：[`bench/cases/eval_scenarios.json`](https://github.com/hugozhu/knowledge-compiler/blob/main/bench/cases/eval_scenarios.json)
+- 评测方法与全部指标：[`bench/results/REPORT.md`](https://github.com/hugozhu/knowledge-compiler/blob/main/bench/results/REPORT.md)
+- 各题三组原始回答：[`bench/results/appendix_answers.md`](https://github.com/hugozhu/knowledge-compiler/blob/main/bench/results/appendix_answers.md)
+
+---
+
 **附：朋友圈转发文案**
 
 > 299 美金的板子，能不能做个人知识库？我用本地 4B 和云端 flash 做了对照实测：够用，而且瓶颈根本不在模型，在管线。Muse 把助理搬上云，数据留在本地的那一天不会太远。代码与数据：https://github.com/hugozhu/knowledge-compiler
