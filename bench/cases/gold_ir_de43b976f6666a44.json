@@ -1,0 +1,423 @@
+{
+  "doc_id": "de43b976f6666a44",
+  "name": "178-agent-model-plus-harness",
+  "ir": {
+    "summary": "文章以公式 Agent = Model + Harness 为起点，指出社区过度关注模型而忽视 Harness，并从 Anthropic Managed Agents 架构实践出发拆解 Agent 架构设计。Anthropic 的核心洞察是 Harness 编码了关于模型能力局限的假设，这些假设会随模型升级过时（如 Claude Sonnet 4.5 的 context anxiety 与 context reset 在 Opus 4.5 上变成死代码），因此应设计面向未来的稳定接口而非今天最优的实现。文章详述了 Model、Harness、Session、Sandbox 四组件解耦（Pet 到 Cattle）、Session/Sandbox/AgentHarness 三个核心接口、Token 不可达的结构性安全（Git Token 注入、MCP+Vault 代理）、Session 独立于上下文窗口，以及按需创建带来的 TTFT 大幅下降（p50 ↓~60%，p95 ↓>90%）。最后提炼出接口稳定实现可变、Brain 与 Hands 解耦、Session 独立于上下文窗口、Token",
+    "topics": [
+      "Agent 架构",
+      "Harness 设计",
+      "Managed Agents",
+      "上下文工程",
+      "Agent 循环",
+      "系统架构",
+      "结构化安全",
+      "TTFT 优化"
+    ],
+    "entities": [
+      {
+        "name": "Anthropic",
+        "type": "org"
+      },
+      {
+        "name": "Managed Agents",
+        "type": "product"
+      },
+      {
+        "name": "Claude",
+        "type": "product"
+      },
+      {
+        "name": "Claude Sonnet 4.5",
+        "type": "product"
+      },
+      {
+        "name": "Claude Opus 4.5",
+        "type": "product"
+      },
+      {
+        "name": "Harness",
+        "type": "technology"
+      },
+      {
+        "name": "Model",
+        "type": "technology"
+      },
+      {
+        "name": "Session",
+        "type": "technology"
+      },
+      {
+        "name": "Sandbox",
+        "type": "technology"
+      },
+      {
+        "name": "AgentHarness",
+        "type": "technology"
+      },
+      {
+        "name": "context anxiety",
+        "type": "other"
+      },
+      {
+        "name": "context reset",
+        "type": "technology"
+      },
+      {
+        "name": "MCP",
+        "type": "technology"
+      },
+      {
+        "name": "Vault",
+        "type": "technology"
+      },
+      {
+        "name": "Git Token 初始化注入",
+        "type": "technology"
+      },
+      {
+        "name": "E2B",
+        "type": "product"
+      },
+      {
+        "name": "Docker",
+        "type": "product"
+      },
+      {
+        "name": "TTFT",
+        "type": "other"
+      },
+      {
+        "name": "Pet 架构",
+        "type": "other"
+      },
+      {
+        "name": "Cattle 架构",
+        "type": "other"
+      }
+    ],
+    "claims": [
+      {
+        "text": "Agent 的最简公式是 Agent = Model + Harness，Model 负责思考推理决策，Harness 负责循环控制、工具路由和状态管理。",
+        "type": "opinion",
+        "confidence": 0.95
+      },
+      {
+        "text": "Harness 编码了关于模型做不到什么的假设，而这些假设会随着模型能力提升而迅速过时。",
+        "type": "fact",
+        "confidence": 0.95
+      },
+      {
+        "text": "模型越强，Harness 的设计就越重要，因为越强的模型需要越精密的控制结构才能把能力转化为可靠产出。",
+        "type": "opinion",
+        "confidence": 0.8
+      },
+      {
+        "text": "一个生产级 Agent 至少包含 Model、Harness、Session、Sandbox 四个独立组件。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "Anthropic 发现 Claude Sonnet 4.5 会在接近上下文限制时过早结束任务，这种被称为 context anxiety 的行为。",
+        "type": "observation",
+        "confidence": 0.9
+      },
+      {
+        "text": "Anthropic 在 Harness 中加入 context reset 来解决 context anxiety，但同一个 Harness 用到 Claude Opus 4.5 上时该行为消失，context reset 变成了死代码。",
+        "type": "observation",
+        "confidence": 0.9
+      },
+      {
+        "text": "Harness 的根本困境是：模型能力弱时加各种 workaround，模型能力提升后 workaround 变成死代码甚至副作用，需要重新设计 Harness。",
+        "type": "opinion",
+        "confidence": 0.9
+      },
+      {
+        "text": "Anthropic 的解法是不要设计今天最好的 Harness，而是设计未来也能用的接口。",
+        "type": "decision",
+        "confidence": 0.9
+      },
+      {
+        "text": "Managed Agents 借鉴操作系统设计哲学，把 Agent 组件抽象为稳定接口，实现层可以随意替换，正如 read() 不在乎读的是旧磁盘还是 SSD。",
+        "type": "opinion",
+        "confidence": 0.85
+      },
+      {
+        "text": "Anthropic 最初把所有组件（Harness、Sandbox、Tokens、Session、Model）塞进一个容器，形成耦合的 Pet 架构，容器挂了会话数据全丢。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "解耦后 Harness 变成无状态的，因为它不持有会话状态，状态全在 Session 里。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "Harness 崩溃后，新的 Harness 可以用 wake(sessionId) 恢复，用 getSession(id) 读取事件日志从中断处继续。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "解耦架构靠三个核心接口运转：Session（持久化事件日志）、Sandbox（执行环境）、AgentHarness（Agent 循环）。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "这三个接口定义了形状而不定义实现，Sandbox 可以是 Docker 容器、E2B 沙箱甚至手机模拟器，Harness 不在乎。",
+        "type": "opinion",
+        "confidence": 0.85
+      },
+      {
+        "text": "耦合架构存在安全漏洞：Prompt Injection 可说服 Claude 读取自己的环境变量拿到 API Token，再用 Token 启动新的无限制 Session。",
+        "type": "observation",
+        "confidence": 0.85
+      },
+      {
+        "text": "把 Token 作用域缩小只是缓解措施，仍在编码『Claude 拿有限 Token 做不了坏事』的假设，而 Claude 正变得越来越聪明。",
+        "type": "opinion",
+        "confidence": 0.85
+      },
+      {
+        "text": "Anthropic 采用结构性修复让 Token 永远不可达。",
+        "type": "decision",
+        "confidence": 0.9
+      },
+      {
+        "text": "模式一 Git Token 初始化注入：Sandbox 初始化时 Harness 用 Token 完成 git clone 并配置好 remote，之后 push/pull 正常但 Agent 代码拿不到 Token 本身。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "模式二 MCP + Vault 代理：Claude 通过 session token 调用 MCP 代理，代理从 Vault 取出真实凭证对外部服务发起请求，Harness 对 OAuth Token 完全无感知。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "结构化的安全比策略性的安全更可靠，不要假设 Agent 拿到 Token 也不会乱用，而是直接让 Agent 拿不到。",
+        "type": "opinion",
+        "confidence": 0.9
+      },
+      {
+        "text": "Compaction、Context Trimming、Memory Tool 等传统上下文管理方法的共同问题是都是不可逆决策，消息一旦被移除就难以找回。",
+        "type": "observation",
+        "confidence": 0.85
+      },
+      {
+        "text": "Managed Agents 把上下文存在 Session 日志里，作为一个独立于上下文窗口的持久化对象。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "getEvents() 接口足够灵活：可从上次停止位置继续读取、回溯几条事件查看前因后果、在执行关键动作前重新读取上下文。",
+        "type": "fact",
+        "confidence": 0.85
+      },
+      {
+        "text": "关注点分离：Session 负责持久化存储，Harness 负责上下文工程，因为无法预测未来模型需要什么样的上下文管理策略。",
+        "type": "opinion",
+        "confidence": 0.85
+      },
+      {
+        "text": "解耦架构带来 TTFT（首 token 延迟）的大幅下降这一意外的性能收益。",
+        "type": "observation",
+        "confidence": 0.85
+      },
+      {
+        "text": "耦合架构中每个 Session 都必须先完成完整的容器初始化（克隆代码库、启动进程、拉取事件），即使可能根本不需要 Sandbox，这些死等待直接体现在 TTFT 上。",
+        "type": "observation",
+        "confidence": 0.85
+      },
+      {
+        "text": "解耦架构使 p50 TTFT 下降约 60%，p95 TTFT 下降超过 90%。",
+        "type": "fact",
+        "confidence": 0.85
+      },
+      {
+        "text": "自建 Agent 系统的常见反模式是先启动容器再调 API，正确做法是先开始推理、需要时才启动容器。",
+        "type": "opinion",
+        "confidence": 0.85
+      },
+      {
+        "text": "解耦架构的另一个好处是可以扩展到 Many Brains、Many Hands。",
+        "type": "opinion",
+        "confidence": 0.85
+      },
+      {
+        "text": "Scale 多个 Brain 只是启动多个无状态 Harness 进程按需连接到 Session，不同团队的 Agent 可各自连接自己 VPC 里的资源而无需网络对等连接。",
+        "type": "fact",
+        "confidence": 0.8
+      },
+      {
+        "text": "解耦后每个 Hand 都变成 execute(name, input) → string 的工具调用，Harness 不知道 Sandbox 是容器、手机还是宝可梦模拟器。",
+        "type": "fact",
+        "confidence": 0.8
+      },
+      {
+        "text": "由于 Brain 和 Hand 没有耦合关系，Brain 之间可以互相传递 Hands，一个 Agent 完成的部分工作可以交接给另一个 Agent 继续。",
+        "type": "opinion",
+        "confidence": 0.8
+      },
+      {
+        "text": "设计原则 1：接口稳定，实现可变——把实现层和接口层分开，替换实现时不破坏接口。",
+        "type": "decision",
+        "confidence": 0.9
+      },
+      {
+        "text": "设计原则 2：Brain 和 Hands 解耦——不要让执行环境和循环控制塞进同一进程，让 Harness 通过统一 execute() 接口调用所有工具。",
+        "type": "decision",
+        "confidence": 0.9
+      },
+      {
+        "text": "设计原则 3：Session 独立于上下文窗口——事件日志应持久化且 append-only，原始数据永远可恢复。",
+        "type": "decision",
+        "confidence": 0.9
+      },
+      {
+        "text": "设计原则 4：Token 不可达——结构性隔离比策略性隔离更可靠，让 Agent 代码永远接触不到敏感凭证。",
+        "type": "decision",
+        "confidence": 0.9
+      },
+      {
+        "text": "设计原则 5：按需创建，不要预分配——容器/沙箱仅在需要时启动，不要为每个 Session 预付初始化成本。",
+        "type": "decision",
+        "confidence": 0.9
+      },
+      {
+        "text": "好的 Agent 不是模型越强越好，而是 Harness 设计得越能适配模型变化越好。",
+        "type": "opinion",
+        "confidence": 0.9
+      },
+      {
+        "text": "Harness 的假设随模型能力提升而过时不是 bug，是 feature。",
+        "type": "opinion",
+        "confidence": 0.85
+      },
+      {
+        "text": "操作系统活了半个世纪靠的不是优化某一代硬件而是定义了 process 和 file 这样的通用抽象，Agent 架构要活到下一个模型迭代周期也需要同样的设计哲学。",
+        "type": "opinion",
+        "confidence": 0.85
+      }
+    ],
+    "relations": [
+      {
+        "subject": "Harness",
+        "predicate": "是 Agent 的组成部分",
+        "object": "Model"
+      },
+      {
+        "subject": "Anthropic",
+        "predicate": "发布",
+        "object": "Managed Agents"
+      },
+      {
+        "subject": "Harness",
+        "predicate": "负责循环控制与工具路由",
+        "object": "Model"
+      },
+      {
+        "subject": "Session",
+        "predicate": "持久化事件日志",
+        "object": "Harness"
+      },
+      {
+        "subject": "Sandbox",
+        "predicate": "提供执行环境",
+        "object": "Harness"
+      },
+      {
+        "subject": "Claude Sonnet 4.5",
+        "predicate": "表现出",
+        "object": "context anxiety"
+      },
+      {
+        "subject": "context reset",
+        "predicate": "曾用于解决",
+        "object": "context anxiety"
+      },
+      {
+        "subject": "context reset",
+        "predicate": "在 Opus 4.5 上成为死代码",
+        "object": "Claude Opus 4.5"
+      },
+      {
+        "subject": "AgentHarness",
+        "predicate": "实现",
+        "object": "Session"
+      },
+      {
+        "subject": "AgentHarness",
+        "predicate": "调用",
+        "object": "Sandbox"
+      },
+      {
+        "subject": "Sandbox",
+        "predicate": "可被实现为",
+        "object": "Docker"
+      },
+      {
+        "subject": "Sandbox",
+        "predicate": "可被实现为",
+        "object": "E2B"
+      },
+      {
+        "subject": "MCP",
+        "predicate": "代理访问",
+        "object": "Vault"
+      },
+      {
+        "subject": "Git Token 初始化注入",
+        "predicate": "隐藏凭证于",
+        "object": "Sandbox"
+      },
+      {
+        "subject": "Managed Agents",
+        "predicate": "借鉴",
+        "object": "操作系统设计哲学"
+      },
+      {
+        "subject": "Pet 架构",
+        "predicate": "被取代为",
+        "object": "Cattle 架构"
+      },
+      {
+        "subject": "Harness",
+        "predicate": "在解耦架构中变为无状态",
+        "object": "Session"
+      },
+      {
+        "subject": "TTFT",
+        "predicate": "因按需创建而降低",
+        "object": "Sandbox"
+      },
+      {
+        "subject": "Claude",
+        "predicate": "调用",
+        "object": "MCP"
+      },
+      {
+        "subject": "Vault",
+        "predicate": "存储",
+        "object": "OAuth Token"
+      },
+      {
+        "subject": "Session",
+        "predicate": "独立于",
+        "object": "上下文窗口"
+      },
+      {
+        "subject": "Harness",
+        "predicate": "负责上下文工程",
+        "object": "Session"
+      },
+      {
+        "subject": "Managed Agents",
+        "predicate": "使用",
+        "object": "Session"
+      },
+      {
+        "subject": "AgentHarness",
+        "predicate": "通过 execute() 调用",
+        "object": "Sandbox"
+      }
+    ]
+  }
+}

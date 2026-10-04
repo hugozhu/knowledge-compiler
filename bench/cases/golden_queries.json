@@ -1,0 +1,92 @@
+[
+  {
+    "query": "Codex 的 /goal 有哪五个状态？",
+    "expected_doc_ids": [
+      "78d89a53782ce92b"
+    ],
+    "k": 6,
+    "mode": "hybrid"
+  },
+  {
+    "query": "Anthropic Managed Agents 解耦后的三个核心接口是什么？",
+    "expected_doc_ids": [
+      "de43b976f6666a44"
+    ],
+    "k": 6,
+    "mode": "hybrid"
+  },
+  {
+    "query": "为什么针对旧模型写的 workaround 最终会变成死代码？",
+    "expected_doc_ids": [
+      "de43b976f6666a44"
+    ],
+    "k": 6,
+    "mode": "hybrid"
+  },
+  {
+    "query": "Agent 长时间自主运行会出现哪两个致命问题？",
+    "expected_doc_ids": [
+      "78d89a53782ce92b"
+    ],
+    "k": 6,
+    "mode": "hybrid"
+  },
+  {
+    "query": "设计 Agent Harness 的五个原则是什么？",
+    "expected_doc_ids": [
+      "de43b976f6666a44"
+    ],
+    "k": 6,
+    "mode": "hybrid"
+  },
+  {
+    "query": "Ralph Loop 的核心观点是谁提出的？原话大意是什么？",
+    "expected_doc_ids": [
+      "78d89a53782ce92b"
+    ],
+    "k": 6,
+    "mode": "hybrid"
+  },
+  {
+    "query": "Loop Engineering 和 Harness Engineering 是什么关系？",
+    "expected_doc_ids": [
+      "de43b976f6666a44",
+      "78d89a53782ce92b"
+    ],
+    "k": 6,
+    "mode": "hybrid"
+  },
+  {
+    "query": "Agent = Model + Harness 公式与 Loop Engineering 如何互相补充？",
+    "expected_doc_ids": [
+      "de43b976f6666a44",
+      "78d89a53782ce92b"
+    ],
+    "k": 6,
+    "mode": "hybrid"
+  },
+  {
+    "query": "解耦 Harness 和 Sandbox 后，TTFT 指标改善了多少？",
+    "expected_doc_ids": [
+      "de43b976f6666a44"
+    ],
+    "k": 6,
+    "mode": "hybrid"
+  },
+  {
+    "query": "钉钉差旅报销 Loop 案例的投入产出比是多少？",
+    "expected_doc_ids": [
+      "78d89a53782ce92b"
+    ],
+    "k": 6,
+    "mode": "hybrid"
+  },
+  {
+    "query": "Codex 用什么机制防止 proxy signal collapse？",
+    "expected_doc_ids": [
+      "78d89a53782ce92b"
+    ],
+    "k": 6,
+    "mode": "hybrid"
+  }
+]

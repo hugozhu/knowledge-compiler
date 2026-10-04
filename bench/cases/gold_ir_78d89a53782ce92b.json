@@ -1,0 +1,452 @@
+{
+  "doc_id": "78d89a53782ce92b",
+  "name": "263-loop-engineering",
+  "ir": {
+    "summary": "文章提出 AI Agent 工程正从 Prompt、Context、Feedback Loop、Harness 四层演进到第五层 Loop Engineering。Loop Engineering 以 Codex CLI 和 Claude Code 的 /goal 为代表，人只定义终点线和 token 预算，Agent 自主迭代跑到完成。其关键组件包括每轮 fresh context、五状态机、audit-first completion 和预算优先，用于对抗 context rot、goal drift 与 proxy signal collapse。文章以钉钉差旅报销为例说明 To B 场景的验证驱动价值，并强调应先建 Harness 再上 Loop。最终核心能力从设计 workflow 升维为定义 done。",
+    "topics": [
+      "AI Agent 工程",
+      "Loop Engineering",
+      "Harness Engineering",
+      "Prompt Engineering",
+      "Context Engineering",
+      "Feedback Loop Engineering",
+      "/goal",
+      "Codex CLI",
+      "Claude Code",
+      "Ralph Loop",
+      "proxy signal collapse",
+      "fresh context"
+    ],
+    "entities": [
+      {
+        "name": "Loop Engineering",
+        "type": "technology"
+      },
+      {
+        "name": "Harness Engineering",
+        "type": "technology"
+      },
+      {
+        "name": "Prompt Engineering",
+        "type": "technology"
+      },
+      {
+        "name": "Context Engineering",
+        "type": "technology"
+      },
+      {
+        "name": "Feedback Loop Engineering",
+        "type": "technology"
+      },
+      {
+        "name": "Codex CLI",
+        "type": "product"
+      },
+      {
+        "name": "/goal",
+        "type": "technology"
+      },
+      {
+        "name": "Claude Code",
+        "type": "product"
+      },
+      {
+        "name": "Ralph Loop",
+        "type": "technology"
+      },
+      {
+        "name": "OpenAI",
+        "type": "org"
+      },
+      {
+        "name": "Greg Brockman",
+        "type": "person"
+      },
+      {
+        "name": "Daniel Demmel",
+        "type": "person"
+      },
+      {
+        "name": "Geoffrey Huntley",
+        "type": "person"
+      },
+      {
+        "name": "Andrew Chen",
+        "type": "person"
+      },
+      {
+        "name": "a16z",
+        "type": "org"
+      },
+      {
+        "name": "钉钉",
+        "type": "product"
+      },
+      {
+        "name": "continuation.md",
+        "type": "technology"
+      },
+      {
+        "name": "update_goal",
+        "type": "technology"
+      },
+      {
+        "name": "context rot",
+        "type": "technology"
+      },
+      {
+        "name": "goal drift",
+        "type": "technology"
+      }
+    ],
+    "claims": [
+      {
+        "text": "OpenAI 在 4 月底发布了 Codex CLI 0.128.0。",
+        "type": "fact",
+        "confidence": 0.95
+      },
+      {
+        "text": "Codex CLI 0.128.0 的更新日志加入了 persisted /goal workflows，涵盖 app-server APIs、model tools、runtime continuation 和 TUI controls。",
+        "type": "fact",
+        "confidence": 0.95
+      },
+      {
+        "text": "Claude Code 几乎在同一时间上线了 /goal 指令。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "Greg Brockman 发推称 Codex 现在内置了 Ralph loop++。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "/goal 代表的不只是又一个功能，而是 AI Agent 工程的一次范式跃迁。",
+        "type": "opinion",
+        "confidence": 0.85
+      },
+      {
+        "text": "Daniel Demmel 将 AI Agent 工程能力总结为四层：Prompt Engineering、Context Engineering、Feedback Loop Engineering、Harness Engineering。",
+        "type": "fact",
+        "confidence": 0.95
+      },
+      {
+        "text": "前四层工程的共同特征是：人决定下一步做什么，Agent 在人的框架内执行。",
+        "type": "observation",
+        "confidence": 0.9
+      },
+      {
+        "text": "Loop Engineering 是第五层，Agent 自己跑到终点，人只定义终点线和预算。",
+        "type": "decision",
+        "confidence": 0.9
+      },
+      {
+        "text": "Harness Engineering 的核心公式是 Agent = Model + Harness，Harness 约束并放大 Model 的能力。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "Loop Engineering 不是替代 Harness，而是在 Harness 之上增加一层自治，好的 Loop 需要好的 Harness 做底座。",
+        "type": "opinion",
+        "confidence": 0.9
+      },
+      {
+        "text": "Harness 模式与人编排 workflow，Loop 模式由 Agent 根据当前状态自己决定下一步。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "Loop Engineering 真正新增的是四个组件的组合：fresh context per iteration、structured state machine、audit-first completion、budget as first-class concern。",
+        "type": "opinion",
+        "confidence": 0.85
+      },
+      {
+        "text": "每轮使用 fresh context 可以防止 context rot 和 goal drift。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "Codex 的 /goal 实现了五个状态：pursuing、paused、achieved、unmet、budget-limited。",
+        "type": "fact",
+        "confidence": 0.95
+      },
+      {
+        "text": "Ralph Loop 的核心观点是：loop 的智能在 loop 里而不在 agent 里，agent 是可替换的，是 loop 让它自治。",
+        "type": "opinion",
+        "confidence": 0.9
+      },
+      {
+        "text": "Codex 的 /goal 指令集包括设置目标、暂停、恢复和清除目标。",
+        "type": "fact",
+        "confidence": 0.95
+      },
+      {
+        "text": "Claude Code 的 /goal 采用声明式目标，例如 all auth tests pass and lint is clean，Agent 跑到满足条件为止。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "a16z 的 Andrew Chen 分享了一个案例：Codex 在 eGPU 设备驱动项目上跑了 14 个小时，一夜之间完成。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "Loop Engineering 最大的坑是 proxy signal collapse，即 Agent 用表面信号代替真实完成。",
+        "type": "opinion",
+        "confidence": 0.9
+      },
+      {
+        "text": "在小学试卷 AI 批改案例中，Agent 说批改完成，但只检查了答案对不对，没有判断解题过程是否合理。",
+        "type": "observation",
+        "confidence": 0.85
+      },
+      {
+        "text": "在 Loop 场景下 proxy signal collapse 更严重，例如只跑单元测试没跑集成测试、提交到错误分支、漏填必填字段。",
+        "type": "observation",
+        "confidence": 0.85
+      },
+      {
+        "text": "Codex 的 continuation.md 模板要求不接受 proxy signal、必须 inspect actual files、run actual tests、verify actual output，只有每个 checklist item 都通过直接验证才能调用 update_goal(achieved)。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "钉钉差旅报销场景尚未完整落地，但每一步的 API 和校验能力在钉钉平台上都已具备。",
+        "type": "observation",
+        "confidence": 0.9
+      },
+      {
+        "text": "差旅报销场景满足 Loop Engineering 的前提：目标明确、验证天然存在、复杂度适中、高频、痛点真实。",
+        "type": "observation",
+        "confidence": 0.85
+      },
+      {
+        "text": "差旅报销的示例 /goal 是提交上周杭州出差的报销单，高铁票 3 张共 ¥1,200、住宿 2 晚 ¥800、餐补按公司标准。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "报销场景的 Iteration 6 和 7 展示了 Loop 的价值：Agent 自己发现缺项目编码并主动从历史记录中查找，而 Harness 模式需要人提前编排分支逻辑。",
+        "type": "observation",
+        "confidence": 0.9
+      },
+      {
+        "text": "报销场景的反 proxy signal 规则包括：必须调用钉钉 API 触发真实校验，0 error 才算 achieved，附件必须验证文件 ID 存在且大小大于 0，金额总计必须等于各分项之和。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "报销场景中 Agent Loop 相比人工可将时间从 15-20 分钟降到 2-3 分钟，打回率从约 15% 降到低于 3%，token 成本约 ¥1.2，用户价值约 ¥25，回报约 20 倍。",
+        "type": "observation",
+        "confidence": 0.8
+      },
+      {
+        "text": "20 倍回报不是因为 model 变强，而是因为 loop 把验证成本降到接近零，钉钉的校验 API 是现成的，Agent 每跑一步都能免费检查。",
+        "type": "opinion",
+        "confidence": 0.85
+      },
+      {
+        "text": "其他适合 Loop Engineering 的场景包括会议待办闭环、群日报收集、CRM 跟进更新、招聘流程推进和审批催办。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "每个适用场景都满足三个前提：目标可验证、复杂度适中、高频。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "目标太简单、目标太大、没有验证手段时不应使用 Loop Engineering。",
+        "type": "opinion",
+        "confidence": 0.9
+      },
+      {
+        "text": "判断标准是：能用一条命令验证 done 还是 not done，就适合 loop；不能，就不适合。",
+        "type": "opinion",
+        "confidence": 0.9
+      },
+      {
+        "text": "给 To B 产品团队的建议是先建 Harness，再上 Loop；没有 Harness 做底座就上 Loop，等于让 Agent 在没有护栏的高速公路上自动驾驶。",
+        "type": "opinion",
+        "confidence": 0.9
+      },
+      {
+        "text": "好的 Harness 有飞轮效应，越用越聪明，知识会复利增长，Loop 建立在这个飞轮之上。",
+        "type": "opinion",
+        "confidence": 0.85
+      },
+      {
+        "text": "上 Loop 需要四样东西：验证工具、安全护栏、状态可观测、优雅退出。",
+        "type": "decision",
+        "confidence": 0.9
+      },
+      {
+        "text": "Codex 的设计值得参考：update_goal 是结构化 tool call 而非文本声明，五个状态语义明确，budget_limit.md 模板指导 Agent 在预算耗尽时总结进度、列出剩余工作并给出下一步。",
+        "type": "fact",
+        "confidence": 0.9
+      },
+      {
+        "text": "Harness Engineering 时代工程师的核心能力是设计 workflow，Loop Engineering 时代核心能力变成定义 done，即用可执行的验证条件说清楚完成。",
+        "type": "opinion",
+        "confidence": 0.9
+      },
+      {
+        "text": "Loop Engineering 本质上是把模糊的“把这件事做好”变成可验证的“满足这些条件就算好”，这是古老的管理学问题，只是以前对人、现在对 Agent。",
+        "type": "opinion",
+        "confidence": 0.85
+      }
+    ],
+    "relations": [
+      {
+        "subject": "OpenAI",
+        "predicate": "发布",
+        "object": "Codex CLI"
+      },
+      {
+        "subject": "Codex CLI",
+        "predicate": "实现",
+        "object": "/goal"
+      },
+      {
+        "subject": "Claude Code",
+        "predicate": "实现",
+        "object": "/goal"
+      },
+      {
+        "subject": "Greg Brockman",
+        "predicate": "评论",
+        "object": "Codex CLI"
+      },
+      {
+        "subject": "Daniel Demmel",
+        "predicate": "总结",
+        "object": "Feedback Loop Engineering"
+      },
+      {
+        "subject": "Loop Engineering",
+        "predicate": "扩展",
+        "object": "Harness Engineering"
+      },
+      {
+        "subject": "Loop Engineering",
+        "predicate": "基于",
+        "object": "Ralph Loop"
+      },
+      {
+        "subject": "Geoffrey Huntley",
+        "predicate": "提出",
+        "object": "Ralph Loop"
+      },
+      {
+        "subject": "Codex CLI",
+        "predicate": "使用",
+        "object": "continuation.md"
+      },
+      {
+        "subject": "continuation.md",
+        "predicate": "约束",
+        "object": "update_goal"
+      },
+      {
+        "subject": "Andrew Chen",
+        "predicate": "任职于",
+        "object": "a16z"
+      },
+      {
+        "subject": "Andrew Chen",
+        "predicate": "分享案例",
+        "object": "eGPU 设备驱动项目"
+      },
+      {
+        "subject": "Codex CLI",
+        "predicate": "运行",
+        "object": "eGPU 设备驱动项目"
+      },
+      {
+        "subject": "Loop Engineering",
+        "predicate": "应用于",
+        "object": "钉钉"
+      },
+      {
+        "subject": "钉钉",
+        "predicate": "提供",
+        "object": "校验 API"
+      },
+      {
+        "subject": "Loop Engineering",
+        "predicate": "需要",
+        "object": "Harness Engineering"
+      },
+      {
+        "subject": "Harness Engineering",
+        "predicate": "核心公式",
+        "object": "Agent = Model + Harness"
+      },
+      {
+        "subject": "Loop Engineering",
+        "predicate": "需要",
+        "object": "验证工具"
+      },
+      {
+        "subject": "Loop Engineering",
+        "predicate": "需要",
+        "object": "安全护栏"
+      },
+      {
+        "subject": "Loop Engineering",
+        "predicate": "需要",
+        "object": "状态可观测"
+      },
+      {
+        "subject": "Loop Engineering",
+        "predicate": "需要",
+        "object": "优雅退出"
+      },
+      {
+        "subject": "Prompt Engineering",
+        "predicate": "先于",
+        "object": "Context Engineering"
+      },
+      {
+        "subject": "Context Engineering",
+        "predicate": "先于",
+        "object": "Feedback Loop Engineering"
+      },
+      {
+        "subject": "Feedback Loop Engineering",
+        "predicate": "先于",
+        "object": "Harness Engineering"
+      },
+      {
+        "subject": "Harness Engineering",
+        "predicate": "先于",
+        "object": "Loop Engineering"
+      },
+      {
+        "subject": "/goal",
+        "predicate": "定义",
+        "object": "终点线"
+      },
+      {
+        "subject": "Loop Engineering",
+        "predicate": "对抗",
+        "object": "proxy signal collapse"
+      },
+      {
+        "subject": "fresh context",
+        "predicate": "防止",
+        "object": "context rot"
+      },
+      {
+        "subject": "fresh context",
+        "predicate": "防止",
+        "object": "goal drift"
+      },
+      {
+        "subject": "update_goal",
+        "predicate": "标记",
+        "object": "achieved"
+      }
+    ]
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "model": "deepseek-v4-flash",
+  "endpoint": "http://192.168.3.1:4000/v1",
+  "docs": [
+    {
+      "tag": "A",
+      "doc_id": "de43b976f6666a44",
+      "name": "178-agent-model-plus-harness",
+      "chars": 16768,
+      "elapsed": 15.16,
+      "usage": {
+        "completion_tokens": 4343,
+        "prompt_tokens": 5492,
+        "total_tokens": 9835,
+        "completion_tokens_details": {
+          "reasoning_tokens": 1114
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 5248
+        }
+      },
+      "error": null,
+      "finish_reason": "stop",
+      "reasoning_len": 3090,
+      "json_ok": true,
+      "claims": 40,
+      "entities": 20,
+      "relations": 24
+    },
+    {
+      "tag": "B",
+      "doc_id": "78d89a53782ce92b",
+      "name": "263-loop-engineering",
+      "chars": 7074,
+      "elapsed": 20.51,
+      "usage": {
+        "completion_tokens": 5714,
+        "prompt_tokens": 3269,
+        "total_tokens": 8983,
+        "completion_tokens_details": {
+          "reasoning_tokens": 2503
+        },
+        "prompt_tokens_details": {
+          "cached_tokens": 3072
+        }
+      },
+      "error": null,
+      "finish_reason": "stop",
+      "reasoning_len": 11029,
+      "json_ok": true,
+      "claims": 39,
+      "entities": 20,
+      "relations": 30
+    }
+  ]
+}

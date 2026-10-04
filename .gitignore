@@ -17,3 +17,6 @@ knowledge/
 # 临时文件
 /tmp/
 .DS_Store
+
+# bench 中间产物（评测数据库/日志/语料副本；报告与 gold 保留在 bench/cases、bench/results）
+bench/work/

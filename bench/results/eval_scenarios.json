@@ -1,0 +1,1748 @@
+{
+  "judge_model": "deepseek-v4-pro",
+  "cases": [
+    {
+      "id": "S01",
+      "category": "exact_search",
+      "query": "Codex 的 /goal 有哪五个状态？",
+      "arms": {
+        "U1": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.003,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.006,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "Codex 的 `/goal` 有五个状态：pursuing、paused、achieved、unmet、budget-limited [1]。",
+            "elapsed": 21.02,
+            "sources": [
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        },
+        "U2": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.028,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.013,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "Codex 的 `/goal` 实现了五个状态：\n\n**pursuing → paused → achieved / unmet / budget-limited**\n\n即：执行中（pursuing）、暂停（paused）、达成（achieved）、未达成（unmet）、预算耗尽（budget-limited）。[2][6]",
+            "elapsed": 2.1,
+            "sources": [
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "Codex 的 `/goal` 实现了五个状态（见文档B）：\n\n`pursuing → paused → achieved / unmet / budget-limited`\n\n即：pursuing（追求中）、paused（暂停）、achieved（达成）、unmet（未达成）、budget-limited（预算耗尽）。",
+            "elapsed": 1.24,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "covered_det": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "S02",
+      "category": "exact_search",
+      "query": "Anthropic Managed Agents 解耦后的三个核心接口是什么？",
+      "arms": {
+        "U1": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.016,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.013,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "Anthropic Managed Agents 解耦后的三个核心接口是：**Model、Action、Observation**。\n\n- **Model**：负责思考、推理和决策，是Agent的“大脑”[1]。  \n- **Action**：定义了Agent如何与外部世界交互，如调用API或执行操作[2]。  \n- **Observation**：负责接收环境反馈，实现Agent与现实世界的连接[3]。\n\n这些接口被设计为稳定、解耦，使得即使底层模型或实现方式变化，整体系统仍能稳定运行，从而实现“未来也能用的接口”[2]。  \n\n> 注：资料中虽未明确列出“三个核心接口”名称，但通过“解耦核心组件”与“Agent = Model + Harness”推导，结合“Action”与“Observation”作为关键交互环节，可合理归纳出上述三个核心接口。",
+            "elapsed": 14.53,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "de43b976f6666a44",
+              "de43b976f6666a44"
+            ],
+            "covered_det": [
+              3
+            ],
+            "judge": {
+              "covered": [],
+              "hallucinated": true
+            },
+            "coverage": 0.333
+          }
+        },
+        "U2": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.008,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.009,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "资料中没有出现\"三个核心接口\"这一说法，也没有列出解耦后的三个接口 [1][2][3][4][5]。\n\n资料中相关的内容是：Anthropic Managed Agents 把 Agent 组件抽象为稳定接口、实现层可随意替换 [2][3]，并给出了 **四个基本组件**——Model（大脑）、Harness（神经系统）、Session（记忆体）、Sandbox（手脚）[5]。至于解耦后具体是哪三个核心接口，提供的资料里没有说明，我无法据此回答。",
+            "elapsed": 3.73,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44"
+            ],
+            "covered_det": [
+              1,
+              2,
+              3
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "解耦后靠三个核心接口运转（来源：文档A）：\n\n1. **Session** —— 持久化事件日志接口，不依赖任何 Model 或 Harness，提供 `emit_event()`、`get_events()`、`wake()`。\n2. **Sandbox** —— 执行环境接口，只暴露 `execute(name, input) -> string`，Harness 不知道背后是容器、VM 还是 MCP 服务。\n3. **AgentHarness** —— Agent 循环接口，唯一有状态但可替换的组件，负责「读取事件 → 构建 prompt → 调用模型 → 执行工具 → 写回」。\n\n这三个接口只定义「形状」，不定义「实现」。",
+            "elapsed": 2.01,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "covered_det": [
+              1,
+              2,
+              3
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "S03",
+      "category": "semantic",
+      "query": "为什么针对旧模型写的 workaround 最终会变成死代码？",
+      "arms": {
+        "U1": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.024,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 3
+            },
+            "hybrid": {
+              "elapsed": 0.053,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "针对旧模型写的 workaround 最终会变成死代码，是因为这类临时解决方案通常依赖于特定模型的特性或行为，而这些特性在模型更新或迭代后可能被修改或废弃 [6]。当模型发生变化时，原本为适配旧模型设计的 workaround 就无法继续工作，从而失去实用性，最终成为“死代码” [6]。",
+            "elapsed": 7.82,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "de43b976f6666a44"
+            ],
+            "covered_det": [],
+            "judge": {
+              "covered": [
+                1,
+                2
+              ],
+              "hallucinated": false
+            },
+            "coverage": 0.4
+          }
+        },
+        "U2": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.009,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 3
+            },
+            "hybrid": {
+              "elapsed": 0.025,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "针对旧模型写的 workaround 会变成死代码，是因为它本质上依赖对旧模型能力或行为的假设；当模型能力提升后，这些假设会过时，workaround 原本要应对的问题可能消失，触发条件不再存在，于是它不再被执行，变成死代码，甚至可能产生副作用 [4]。\n\n资料中的例子是：同一个 Harness 用在 Claude Opus 4.5 上时，context anxiety 行为消失，导致 context reset 变成死代码 [5]。这也被概括为 Harness 的根本困境：其包含的假设注定会过时，模型能力提升会让 workaround 变成死代码甚至产生副作用 [4]。类似地，资料也指出模型能力提升会让 Harness 的假设过时，这不是 bug，而是 feature [2]。",
+            "elapsed": 4.24,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [
+              3,
+              5
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                5
+              ],
+              "hallucinated": false
+            },
+            "coverage": 0.8
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "针对旧模型写的 workaround，本质上是在弥补当时模型“做不到”或“会出错”的能力缺陷。但 Harness 会编码“模型做不到什么”的假设，而这些假设会随着模型能力提升迅速过时：新模型不再出现旧行为，原来的 workaround 就不再被触发、不再必要，于是变成死代码，甚至可能变成副作用。文档A举的例子是：Claude Sonnet 4.5 会在接近上下文限制时过早结束任务，于是 Harness 加入 context reset；但换到 Claude Opus 4.5 后该行为消失，context reset 就成了死代码。（文档A）",
+            "elapsed": 3.23,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "covered_det": [
+              3,
+              4,
+              5
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "hallucinated": true
+            },
+            "coverage": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "S04",
+      "category": "semantic",
+      "query": "Agent 长时间自主运行会出现哪两个致命问题？",
+      "arms": {
+        "U1": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.011,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "de43b976f6666a44",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 0.25,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.006,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 0.2,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "Agent长时间自主运行会出现两个致命问题：**上下文腐烂**（context rot）和**目标漂移**（goal drift）[3]。",
+            "elapsed": 4.34,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "de43b976f6666a44"
+            ],
+            "covered_det": [
+              1,
+              2
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2
+              ],
+              "hallucinated": false
+            },
+            "coverage": 0.667
+          }
+        },
+        "U2": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.004,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 0.5,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.007,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 0.2,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "Agent 长时间自主运行会出现的两个致命问题是 [3]：\n\n1. **context rot（上下文腐烂）**——历史信息太多，精确度下降。\n2. **goal drift（目标漂移）**——跑着跑着解决了一个略有不同的问题。\n\n对应的解法是每轮使用 **fresh context**，让长期记忆留在 loop 里，而不是放在 model 里 [3]。",
+            "elapsed": 4.12,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44"
+            ],
+            "covered_det": [
+              1,
+              2
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "根据文档B，Agent 长时间自主运行会出现两个致命问题：\n\n1. **context rot（上下文腐烂）**：历史信息太多，精确度下降。\n2. **goal drift（目标漂移）**：跑着跑着解决了一个略有不同的问题。（来源：文档B）",
+            "elapsed": 1.81,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "covered_det": [
+              1,
+              2
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2
+              ],
+              "hallucinated": false
+            },
+            "coverage": 0.667
+          }
+        }
+      }
+    },
+    {
+      "id": "S05",
+      "category": "entity",
+      "query": "设计 Agent Harness 的五个原则是什么？",
+      "arms": {
+        "U1": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.011,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.006,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "根据提供的资料，设计 Agent Harness 的五个原则可归纳如下：\n\n1. **Harness 必须解耦 Model 与执行环境**：Harness 应独立于具体模型和执行环境（如容器、手机、模拟器），从而支持多种执行方式 [4]。  \n2. **设计足够通用的接口**：应定义通用的抽象接口（如 `execute(name, input) → string`），以适应未来模型、Harness 或 Sandbox 的演进，而非依赖特定实现 [5]。  \n3. **模型越强，Harness 越重要**：随着模型能力增强，对精确控制和结构化设计的需求增加，因此 Harness 的设计必须更精密 [3]。  \n4. **以“稳定接口”为核心**：Agent 架构应关注稳定、可预测的接口，而非单纯追求性能优化，这类似于操作系统对进程和文件的抽象 [6]。  \n5. **支持“Many Brains”与“Many Hands”**：通过解耦，可灵活扩展多个推理单元（Brain）与多个执行单元（Hand），实现弹性扩展与资源隔离 [4]。\n\n这些原则共同构成一个可演进、可扩展且可靠的 Agent 架构基础 [6]。",
+            "elapsed": 20.92,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [],
+            "judge": {
+              "covered": [
+                1,
+                2
+              ],
+              "hallucinated": false
+            },
+            "coverage": 0.4
+          }
+        },
+        "U2": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.002,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 0.25,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.008,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "提供的资料中**没有**\"设计 Agent Harness 的五个原则\"这一内容，我无法据此列出五条原则。\n\n资料中与 Harness 设计相关的可用信息仅包括：\n\n- Agent 系统由 Model、Harness、Session、Sandbox 四个组件构成，Harness 负责循环控制、工具路由、上下文管理，类比\"神经系统\"[3][4]。\n- Harness 才是 Agent 从 demo 走向 production 的关键[4]。\n- Harness 的根本困境：它编码了关于\"模型做不到什么\"的假设，而这些假设会随模型能力提升迅速过时；推论是\"模型越强，Harness 的设计就越重要\"[2]。\n- 一种设计方向是解耦：让 Harness 变为无状态，状态全放在 Session 中，Harness 崩溃后可用 `wake(sessionId)` / `getSession(id)` 从事件日志恢复、从中断处继续；整体靠三个核心接口（如 Session 的 `emit_event`、`get_events` 等）运转[5]。\n\n如果你需要\"五个原则\"的确切内容，建议补充包含该章节的资料。",
+            "elapsed": 5.24,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44"
+            ],
+            "covered_det": [],
+            "judge": {
+              "covered": [],
+              "hallucinated": false
+            },
+            "coverage": 0.0
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "设计 Agent Harness 的五个原则（来源：文档A《Agent = Model + Harness》）：\n\n1. **接口稳定，实现可变**——Harness 接口应假设\"模型会变强\"，把实现层与接口层分开，替换实现时不破坏接口。\n2. **Brain 和 Hands 解耦**——不要把执行环境和循环控制塞进同一进程，让 Harness 通过统一的 `execute()` 接口调用所有工具，Sandbox 挂了只是工具调用失败，不会导致整个会话丢失。\n3. **Session 独立于上下文窗口**——事件日志应持久化且 append-only；Compaction 和 trimming 可发生在 Harness 层，但原始数据永远可恢复。\n4. **Token 不可达**——结构性隔离比策略性隔离更可靠；Git Token 初始化注入、MCP Vault 代理，让 Agent 代码永远接触不到敏感凭证。\n5. **按需创建，不要预分配**——TTFT 是用户最敏感的延迟指标，容器/沙箱仅在需要时启动，不要为每个 Session 预付初始化成本。",
+            "elapsed": 1.92,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "covered_det": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "S06",
+      "category": "entity",
+      "query": "Ralph Loop 的核心观点是谁提出的？原话大意是什么？",
+      "arms": {
+        "U1": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.003,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.011,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "Ralph Loop 的核心观点是由 Daniel Demmel 提出的，他在其文章《Feedback Loop Engineering》中系统性地阐述了这一概念 [3]。  \n\n其核心大意是：在“Feedback Loop Engineering”框架下，**人决定下一步做什么**，而“/goal”机制打破了传统模式——不再要求Agent执行每一步的详细指令，而是仅告知其终点目标，由Agent自主迭代并验证每一步的正确性 [3]。  \n\n该机制的关键在于：**Agent必须通过真实验证（如检查实际文件、运行实际测试）才能确认完成，而非依赖代理信号（如“已完成”）**，从而避免“context rot”与“goal drift”等错误 [6]。  \n\n因此，Ralph Loop 的核心观点是：**以目标为终点，通过每轮真实验证实现自主迭代与可靠执行** [3]。",
+            "elapsed": 16.37,
+            "sources": [
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [],
+            "judge": {
+              "covered": [],
+              "hallucinated": true
+            },
+            "coverage": 0.0
+          }
+        },
+        "U2": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.002,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.013,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "资料中没有说明「Ralph Loop」的核心观点由谁提出，也没有给出相关原话。\n\n唯一相关的是 [4]：Greg Brockman 称 Codex 现在内置了 Ralph loop++——但这只是提及，并未涉及 Ralph Loop 的核心观点或提出者。",
+            "elapsed": 4.52,
+            "sources": [
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [],
+            "judge": {
+              "covered": [],
+              "hallucinated": false
+            },
+            "coverage": 0.0
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "Geoffrey Huntley 提出了 Ralph Loop（见文档B）。\n\n其核心观点原话大意是：**循环的智能在循环本身，而不在 agent 里；agent 是可替换的，是循环让它变得自主。**\n\n> \"The loop's intelligence is in the loop, not in the agent. The agent is fungible. The loop is what makes it autonomous.\"\n\n来源：文档B《Loop Engineering：AI Agent 工程的第五层》。",
+            "elapsed": 1.63,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "covered_det": [
+              1,
+              3
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "S07",
+      "category": "cross_doc",
+      "query": "Loop Engineering 和 Harness Engineering 是什么关系？",
+      "arms": {
+        "U1": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.052,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 0.5,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.033,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "Loop Engineering 和 Harness Engineering 是 AI Agent 工程中的两个相关但不同的概念，它们共同构成 Agent 的系统架构，但层级和功能不同。\n\n- **Harness Engineering** 是 Agent 的基础框架，负责定义 Agent 在何种结构中运行，包括 workflow 的编排、状态管理（如 5 个状态的结构化状态机）以及如何响应外部输入 [3]。它决定了 Agent 的“运行框架”，由人类设计并控制每一步的执行 [3]。\n\n- **Loop Engineering** 则在 Harness Engineering 之上发展，引入了“自治”能力：Agent 能根据当前状态自主决定下一步行动，而非完全由人类编排 [4]。它新增了关键组件，包括 **fresh context per iteration**（防止上下文退化）、**structured state machine**（明确的状态结构）、**audit-first completion**（强制验证以避免代理信号崩溃）以及 **budget as first-class concern**（将 token 预算作为核心考量）[4]。\n\n因此，Loop Engineering 并非简单地在 Harness Engineering 上添加“auto_continue=true”，而是通过上述多个组件的组合，构建了一个更智能、更自主的执行机制 [4]。可以说，**Loop Engineering 是在 Harness Engineering 基础上进一步演进，实现了从“人编排”到“Agent 自主决策”的转变** [4]。\n\n简言之：**Loop Engineering 是在 Harness Engineering 之上发展出的更高级、更自主的工程范式** [4]。",
+            "elapsed": 24.55,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [],
+            "judge": {
+              "covered": [
+                1,
+                3,
+                4
+              ],
+              "hallucinated": true
+            },
+            "coverage": 0.75
+          }
+        },
+        "U2": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.012,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 0.5,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.017,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "Loop Engineering 不是替代 Harness Engineering，而是在 Harness 之上叠加的一层自治 [3]。\n\n具体关系：\n\n- **层级关系**：在工程分层中，Harness Engineering 是第四层（Prompt < Context < Feedback Loop < Harness），而 Loop Engineering 被定位为第五层 [2][4]。\n- **底座与上层**：好的 Loop 需要好的 Harness 做底座 [3]。\n- **核心区别在于「谁决定下一步」**：Harness 模式下由人编排 workflow，Agent 在人的框架内执行；Loop 模式下 Agent 根据当前状态自己决定下一步，人只定义终点线 [2][3]。\n\n资料也指出，把它简单理解为「Harness 加个 auto_continue=true」虽有道理但不完整——Loop Engineering 真正新增的是四个组件的组合：fresh context per iteration、structured state machine、audit-first completion、budget as first-class concern [3]。",
+            "elapsed": 3.94,
+            "sources": [
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [
+              2
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "hallucinated": true
+            },
+            "coverage": 1.0
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "Loop Engineering 建立在 Harness Engineering 之上，不是替代关系。文档B明确写道：「Loop Engineering 不是替代 Harness——它在 Harness 之上加了一层自治。好的 Loop 需要好的 Harness 做底座。」（文档B）\n\n两者的核心区别在于**谁决定下一步**：\n- Harness 模式下，人编排 workflow，Agent 在框架内执行；\n- Loop 模式下，Agent 根据当前状态自己决定路径，人只定义终点线（/goal）和预算。（文档B）\n\n在五层演进中，Loop 处于最上层：Prompt → Context → Feedback Loop → Harness → Loop，前四层都是「人决定下一步做什么」，Loop 层则是「人定义终点线 + 预算，Agent 自己找路跑到」。（文档B）\n\n落地建议是**先建 Harness，再上 Loop**：没有 Harness 做底座就上 Loop，等于让 Agent 在没有护栏的高速公路上自动驾驶。文档B还指出需要四样东西作为支撑——验证工具、安全护栏、状态可观测、优雅退出。（文档B）\n\n作为背景，文档A对 Harness 的定位是：Agent = Model + Harness，Harness 负责循环控制、工具路由、状态管理，其假设会随模型能力提升而过时，因此要设计稳定接口而非「今天最好的 Harness」。（文档A）",
+            "elapsed": 2.82,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "covered_det": [
+              2
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "S08",
+      "category": "cross_doc",
+      "query": "Agent = Model + Harness 公式与 Loop Engineering 如何互相补充？",
+      "arms": {
+        "U1": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.012,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 0.5,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.019,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "Agent = Model + Harness 的公式与 Loop Engineering 互相补充：  \n\n- **Model** 负责思考、推理和决策，是 Agent 的“大脑”；  \n- **Harness** 负责控制执行流程，包括工具调用、上下文管理与循环控制，是 Agent 的“神经系统”[1]。  \n\n而 **Loop Engineering** 的核心是将 Agent 的运行从“被指令”转变为“自主寻路”——人不再定义每一步，而是仅设定终点（goal）[3]。此时，Harness 成为关键，它通过反馈机制（Feedback Loop）实现自我校准与持续运行，使 Agent 能在无人干预下自主完成任务 [2]。  \n\n因此，**Harness 为 Agent 提供了运行框架，而 Loop Engineering 为 Harness 建立了动态闭环**，两者共同支撑 Agent 从演示走向可持久、可扩展的生产级应用 [[4]，[6]。  \n\n例如，Agent 在14小时自主完成 eGPU 驱动项目，正是 Loop Engineering 与 Harness 精准协同的结果 [5]。",
+            "elapsed": 18.97,
+            "sources": [
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "de43b976f6666a44"
+            ],
+            "covered_det": [],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                5
+              ],
+              "hallucinated": true
+            },
+            "coverage": 0.6
+          }
+        },
+        "U2": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.01,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 0.5,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.018,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "二者是“架构公式”和“演进方法”的互补关系：\n\n- **Agent = Model + Harness 定义架构边界**：Model 负责思考、推理、决策；Harness 负责循环控制、工具路由、上下文管理；再配合 Session 持久化日志、Sandbox 执行环境 [1][4]。它回答的是 Agent“由什么组成、接口如何稳定”。\n- **Loop Engineering 定义循环与目标设计**：在工程分层中，Demmel 总结为 Prompt → Context → Feedback Loop → Harness Engineering，共同点是“人决定下一步做什么” [2][5][6]。而 `/goal` 打破了这一模式：人不再告诉 Agent 每一步，只告诉它终点线在哪 [2]。Loop Engineering 被表述为第五层，核心是“人定义终点线，Agent 找路径” [3]。\n- **互相补充**：Harness 提供承载循环的执行框架——循环控制、工具路由、上下文管理、Session/Sandbox，使 Agent 能持续运行、自检和调用工具 [1][4]；Loop Engineering 则为 Harness 提供目标导向的循环设计，把 Harness Engineering 从“人设计 workflow、人在框架内执行”推进到“人给目标、Agent 自主循环找路径” [2][3]。\n\n简言之：**Model + Harness 说明 Agent 是什么、靠什么运行；Loop Engineering 说明如何让这个 Harness 中的循环围绕目标自主运转。**",
+            "elapsed": 11.4,
+            "sources": [
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [
+              1
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                5
+              ],
+              "hallucinated": true
+            },
+            "coverage": 0.6
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "**一句话：Harness 提供底座，Loop 在其上加一层自治；不是替代关系。**\n\n## 1. 层次关系：Loop 在 Harness 之上\n\n文档B明确说：「Loop Engineering 不是替代 Harness——它在 Harness 之上加了一层自治。好的 Loop 需要好的 Harness 做底座。」并给出演进链：Prompt < Context < Feedback Loop < Harness < Loop（文档B）。\n\n文档A的 `Agent = Model + Harness` 定义了 Agent 的最小构成——Model 思考、Harness 负责循环控制/工具路由/状态管理（文档A）。Loop Engineering 则把「谁决定下一步」从人交给 Agent：Harness 模式下人编排 workflow；Loop 模式下 Agent 根据当前状态自己决定（文档B）。\n\n## 2. Harness 的组件正好是 Loop 的四个前提\n\n文档B指出上 Loop 前需要四样东西，它们全部对应文档A的 Harness 组件：\n\n| Loop 需要 | Harness 提供 | 来源 |\n|---|---|---|\n| 验证工具（表单校验/状态查询 API） | `Sandbox.execute(name, input) → string` 就是这些 API 的调用入口 | 文档A |\n| 安全护栏（token budget、操作白名单） | 「Token 不可达」的结构性隔离（Git 初始化注入、MCP Vault 代理） | 文档A |\n| 状态可观测（每轮决策日志、审计报告） | Session 持久化事件日志，append-only、可 `getEvents()` 按需读取 | 文档A |\n| 优雅退出（卡住报 unmet 而非死循环） | 无状态 Harness + `wake(sessionId)` 崩溃恢复；Session 保证数据可恢复 | 文档A |\n\n## 3. 互补点：Loop 缓解了 Harness 的「假设过时」困境\n\n文档A的核心痛点是：Harness 编码了「模型做不到什么」的假设，模型变强后 workaround 变成死代码（如 context reset 在 Opus 4.5 上失效）。\n\n文档B的差旅报销案例给出了解法：Harness 模式下人必须提前编排「项目编码为空 → 查历史记录」的分支；Loop 模式下 Agent 自己发现缺字段、自己去找——人只需提供校验 API 作为「Harness 的传感器组件」（文档B）。也就是说，**Loop 把异常路径的决策从「人预先写进 Harness 的假设」转移到 Agent 运行时自主判断**，天然对抗假设过时。\n\n## 4. 反过来，Harness 的接口设计让 Loop 可迁移\n\n文档A主张「接口稳定，实现可变」「Session 独立于上下文窗口」——这正好支撑文档B的 Loop 关键设计：每轮 fresh context，长期记忆放在 loop 里而不在 model 里（文档B）。Session 作为独立于上下文窗口的持久化对象（文档A），让 Loop 每轮的 fresh context 不丢状态；Sandbox/MCP 的稳定接口，让 Loop 换执行环境时不用改循环逻辑。\n\n## 结论\n\n- **Harness 解决「Agent 在什么框架内运行」**，定义稳定的接口、安全边界与持久化状态（文档A）；\n- **Loop 解决「Agent 自己跑到终点」**，定义 done 与预算，把异常路径交给 Agent 自主处理（文档B）；\n- 二者关系是**地基与上层**：先建 Harness，再上 Loop；没有 Harness 底座就上 Loop，等于「在没有护栏的高速公路上自动驾驶」（文档B）。",
+            "elapsed": 6.24,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "covered_det": [
+              2
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                4,
+                5
+              ],
+              "hallucinated": false
+            },
+            "coverage": 0.8
+          }
+        }
+      }
+    },
+    {
+      "id": "S09",
+      "category": "fact",
+      "query": "解耦 Harness 和 Sandbox 后，TTFT 指标改善了多少？",
+      "arms": {
+        "U1": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.004,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.007,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "解耦 Harness 和 Sandbox 后，TTFT（端到端响应时间）指标改善了 **超过90%** [2]。",
+            "elapsed": 3.85,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44"
+            ],
+            "covered_det": [],
+            "judge": {
+              "covered": [
+                2
+              ],
+              "hallucinated": false
+            },
+            "coverage": 0.333
+          }
+        },
+        "U2": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.003,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.009,
+              "top_doc_ids": [
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44",
+                "de43b976f6666a44"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "资料中没有明确说明「解耦 Harness 和 Sandbox 后 TTFT 改善了多少」这一对应关系。\n\n只能看到片段数据：TTFT 为 95、下降 **>90%** [6]，但资料未完整呈现该数据对应的具体改动条件，因此无法确认它就是解耦 Harness 与 Sandbox 带来的结果。",
+            "elapsed": 3.31,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44"
+            ],
+            "covered_det": [],
+            "judge": {
+              "covered": [
+                2
+              ],
+              "hallucinated": false
+            },
+            "coverage": 0.333
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "根据文档A（178 Agent=Model+Harness），解耦后 TTFT 改善为：\n\n- **p50 TTFT：下降约 60%**\n- **p95 TTFT：下降超过 90%**\n\n原因是耦合架构中每个 Session 都必须先完成完整容器初始化（克隆代码库、启动进程等），即使不需要 Sandbox 也要等待；解耦后容器仅在需要时才创建。\n\n（来源：文档A《Agent = Model + Harness》）",
+            "elapsed": 1.65,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "covered_det": [
+              1,
+              2
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "S10",
+      "category": "fact",
+      "query": "钉钉差旅报销 Loop 案例的投入产出比是多少？",
+      "arms": {
+        "U1": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.003,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.009,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "根据资料，钉钉差旅报销 Loop 的投入产出比约为 **20 倍回报**。\n\n具体而言，Agent 每次迭代调用钉钉校验 API 的成本为 ¥1.2（约 200k tokens），而通过 Loop 机制将验证成本降至接近零，用户节省了约 15 分钟（约 ¥25，按 ¥100/小时估算），从而实现 ¥1.2 换 ¥25 的回报，约为 20 倍 [6]。",
+            "elapsed": 11.02,
+            "sources": [
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [
+              1,
+              2,
+              3
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "hallucinated": true
+            },
+            "coverage": 1.0
+          }
+        },
+        "U2": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.002,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.012,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "钉钉差旅报销 Loop 案例的投入产出比约为 **20 倍回报** [3]。\n\n依据资料中的估算：Token 成本约 ¥1.2（约 200k tokens），用户价值为省 15 分钟 ≈ ¥25（按 ¥100/小时估算），即 ¥1.2 换 ¥25 [3]。资料同时指出，这一回报不是因为 model 变强，而是因为 loop 把验证成本降到了接近零——钉钉的校验 API 是现成的，Agent 每跑一步都能免费检查 [3]。此外该案例的打回率从约 15%（经验估算）降至 <3%（校验驱动）[3]。\n\n注：以上为资料给出的估算值，非精确测量结果 [3]。",
+            "elapsed": 3.62,
+            "sources": [
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "de43b976f6666a44"
+            ],
+            "covered_det": [
+              1,
+              2,
+              3
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "钉钉差旅报销 Loop 案例中，Token 成本约 ¥1.2（约 200k tokens），用户价值约省 15 分钟 ≈ ¥25（按 ¥100/小时估算），投入产出比约为 **20 倍回报**（资料中标注为基于估算）。（来源：文档B《Loop Engineering：AI Agent 工程的第五层》）",
+            "elapsed": 1.45,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "covered_det": [
+              1,
+              2,
+              3
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "hallucinated": false
+            },
+            "coverage": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "S11",
+      "category": "multihop",
+      "query": "Codex 用什么机制防止 proxy signal collapse？",
+      "arms": {
+        "U1": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.005,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.014,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "Codex 通过 **审计优先的完成机制**（audit-first completion）防止 proxy signal collapse，即在每个迭代中必须直接验证实际文件、实际测试结果和实际输出，而非仅依赖表面信号（如“答案正确”或“测试通过”）[2]。  \n具体而言，Agent 必须：  \n- 检查实际文件  \n- 运行实际测试  \n- 验证实际输出  \n只有当所有检查项均通过直接验证后，才能调用 `update_goal(achieved)` [3]。  \n这一机制确保了“表面信号”不被误认为完成，从而避免代理信号坍塌 [2]。  \n\n此外，该机制依赖 **每轮使用 fresh context**，以防止上下文腐烂（context rot）和目标漂移（goal drift），并保障状态的精确性 [2]。  \n\n因此，Codex 的 `continuation.md` 模板明确禁止接受 proxy 信号作为完成，强制要求对实际内容进行验证 [3]。",
+            "elapsed": 17.98,
+            "sources": [
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "de43b976f6666a44",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [
+              1
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                4
+              ],
+              "hallucinated": true
+            },
+            "coverage": 0.75
+          }
+        },
+        "U2": {
+          "retrieval": {
+            "fts": {
+              "elapsed": 0.005,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "de43b976f6666a44",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            },
+            "hybrid": {
+              "elapsed": 0.015,
+              "top_doc_ids": [
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b",
+                "78d89a53782ce92b"
+              ],
+              "recall": 1.0,
+              "mrr": 1.0,
+              "hits": 6
+            }
+          },
+          "ask": {
+            "answer": "Codex 主要靠 **audit-first completion（审计优先的完成判定）** 来对抗 proxy signal collapse [3]。\n\n具体落地机制是每轮注入 Agent system prompt 的 `continuation.md` 模板，规则包括 [2]：\n\n- 不接受 proxy signal 作为完成\n- 必须 inspect actual files（检查真实文件）\n- 必须 run actual tests（跑真实测试）\n- 必须 verify actual output（验证真实输出）\n- 只有每个 checklist item 都通过**直接验证**，才能调用 `update_goal(achieved)`\n\n要防的问题是：表面信号不等于真实完成——比如「答案正确」不代表「解题过程正确」[5]，「测试通过」可能只跑了单元测试没跑集成测试，「代码已提交」可能提交到了错误分支 [2]。所以它强制用直接验证代替代理信号，且把这一判定作为完成状态的唯一入口 [2][3]。",
+            "elapsed": 4.97,
+            "sources": [
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b",
+              "78d89a53782ce92b"
+            ],
+            "covered_det": [
+              1
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                4
+              ],
+              "hallucinated": false
+            },
+            "coverage": 0.75
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "Codex 通过 `continuation.md` 模板（每轮注入 Agent 的 system prompt）来防止 proxy signal collapse，要求：\n\n- 不接受 proxy signal 作为完成\n- 必须 inspect actual files\n- 必须 run actual tests\n- 必须 verify actual output\n- 只有每个 checklist item 都通过直接验证，才能调用 `update_goal(achieved)`\n\n此外，`update_goal` 被设计为结构化的 tool call（而非文本声明），五个状态都有明确语义。（来源：文档B）",
+            "elapsed": 2.28,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "covered_det": [
+              1
+            ],
+            "judge": {
+              "covered": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "hallucinated": true
+            },
+            "coverage": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "S12",
+      "category": "context",
+      "query": "为『在 VENTUNO Q 上设计一个本地优先的 Agent Harness』准备背景资料",
+      "arms": {
+        "U1": {
+          "context": {
+            "elapsed": 0.77,
+            "chars": 5733,
+            "stats": {
+              "keywords": [
+                "VENTUNO",
+                "本地优先",
+                "Agent",
+                "Harness"
+              ],
+              "entities": 2,
+              "claims": 1,
+              "memories": 0,
+              "sources": 2,
+              "chars": 5733,
+              "max_chars": 6000
+            },
+            "facts_covered": [
+              "Agent = Model + Harness",
+              "Session",
+              "Sandbox",
+              "Token 不可达",
+              "Loop Engineering",
+              "fresh context"
+            ],
+            "coverage": 1.0,
+            "pack": "# Task Context\n\n**任务**：为『在 VENTUNO Q 上设计一个本地优先的 Agent Harness』准备背景资料\n\n**关键词**：VENTUNO 本地优先 Agent Harness\n\n## 关键实体\n\n- harness [technology]，2 docs\n- Agent [project]，2 docs\n\n## 相关论断\n\n- [c1] [observation|0.98] 模型越强，Harness 的设计越重要\n- [c2] [observation|0.98] Harness 从头到尾从未感知 OAuth Token 的存在\n- [c3] [fact|0.96] Agent 循环是唯一有状态组件\n- [c4] [fact|0.99] Agent必须调用钉钉API触发真实校验，不能仅依赖表面信号\n- [c5] [observation|0.97] Prompt Injection攻击路径中，Agent获得API Token将导致无限权限\n- [c6] [fact|0.96] agent的自主迭代依赖于每轮fresh context以维持精确性和目标一致性\n- [c7] [observation|0.93] Anthropic 的工程实践揭示了 Harness 的根本困境\n- [c8] [hypothesis|0.85] Agent系统的设计模式是面向未来的\n- [c9] [fact|0.95] AI Agent工程的第五层以'goal'功能为核心，标志着从反馈循环到目标驱动的范式转变\n- [c10] [observation|0.85] 过去管理者对人进行目标验证，现在扩展到对Agent进行验证\n- [c11] [observation|0.92] Agent在14小时自主运行完成eGPU设备驱动项目，体现Loop Engineering的效能\n- [c12] [observation|0.93] 人工打回率约15%，Agent模式打回率低于3%\n\n## 原文摘录\n\n- [s2] e.\"*  Harness 编码了关于\"模型做不到什么\"的假设，而这些假设会随着模型能力提升而迅速过时。一个更有趣的推论是：**模型越强，Harness 的设计就越重要**——因为越强的模型需要越精密的控制结构，才能把能力转化为可靠的产出。 这篇文章从 Anthropic 的工程实践出发，拆解 Agent 架构的核心设计模式，以及\"面向未来的 Harness\"到底长什么样。  <!--more-->  ## Agent 的四个基本组件  先看 Agent 系统的全貌。一个生产级 Agent 不只是\"调 API + 循环\"，它至少包含四个独立组件：\n- [s1] --- title: \"Agent = Model + Harness：从 Anthropic Managed Agents 看 Agent 架构演进\" subtitle: \"Why Agent Architecture is About Stable Interfaces, Not Just Better Models\" date: 2026-04-16 tags: [\"ai-agents\", \"agent-loop\", \"system-architecture\", \"anthropic\", \"LLM\", \"managed-agents\", \"harness-design\", \"context-engineering\"] ingested: 2026-05-04 sha256: 374b09b9d7f02c46a23896db9ae86df37d21fb6a437d59900977631…\n- [s3] 的核心设计模式，以及\"面向未来的 Harness\"到底长什么样。  <!--more-->  ## Agent 的四个基本组件  先看 Agent 系统的全貌。一个生产级 Agent 不只是\"调 API + 循环\"，它至少包含四个独立组件： ``` ┌────────────────────────────────────────────────────────────┐ │                     Agent System                            │ │                                                             │ │  ┌─────────────┐   ┌────────────────┐   ┌───────────────┐  │ │  │   Session   │◄─▶…\n- [s4]                 │  思考 · 推理 · 决策  │                    │ │                   └────────────────┘                        │  └────────────────────────────────────────────────────────────┘ ```  | 组件 | 职责 | 类比 | |------|------|------| | **Model** | 思考、推理、生成行动计划 | 大脑 | | **Harness** | 循环控制、工具路由、上下文管理 | 神经系统 | | **Session** | 持久化事件日志，append-only | 记忆体 | | **Sandbox** | 代码执行、文件编辑、网络请求 | 手脚 |  大多数人只关注 Model…\n- [s7]         │ │  \"这是 cattle，死了一个，启动新的就行\"                      │ └──────────────────────────────────────────────────────┘ ``` Harness 变成了无状态的——因为它不持有会话状态，状态全在 Session 里。如果 Harness 崩溃，新的 Harness 用 `wake(sessionId)` 恢复，用 `getSession(id)` 读取事件日志，从中断处继续。  ### 三个核心接口  解耦后的架构靠三个接口运转：  ```python class Session(ABC):     \"\"\"持久化事件日志——不依赖任何 Model 或 Harness\"\"\"  @abstractmethod     def emit_event(self, session_id: …\n- [s22] ness 的假设会随着模型能力提升而过时——这不是 bug，是 feature。真正好的 Harness 设计不是优化今天的性能，而是定义一组足够通用的接口，让未来的模型、未来的 Harness 实现、未来的 Sandbox 都能无缝接入。 操作系统活了半个世纪，靠的不是优化某一代硬件，而是定义了 process 和 file 这样的通用抽象。Agent 架构要活到下一个模型迭代周期，也需要同样的设计哲学。  ---  **你怎么看？** 你在搭建 Agent 时遇到过\"模型升级导致 Harness 失效\"的情况吗？欢迎在评论区分享你的经验。你觉得 Agent 架构中最难设计的部分是 Model、Harness、Session 还是 Sandbox？\n- [s17] 95 TTFT | **↓ >90%** |  这个数据对自建 Agent 系统的人很有启发。用 E2B 或 Docker 搭建 Agent 时，常见的反模式是\"先启动容器，再调 API\"。正确的做法应该是\"先开始推理，需要时才启动容器\"。 ## Many Brains, Many Hands  解耦架构的另一个好处是可以扩展到\"多个 Brain\"和\"多个 Hands\"。  ### Many Brains  当 Harness 不再和容器耦合，Scale 多个 Brain 就只是启动多个无状态的 Harness 进程，按需连接到 Session。不同团队的 Agent 可以各自连接到自己 VPC 里的资源，不再需要网络对等连接。  ### Many Hands  Claude 需要推理多个执行环境，决定把工作分发到哪里——这比在单一 Shell 里操作更难。但解耦后，每个 Hand 都变成…\n- [s5]                        ▼         ┌──────────────────────┐         │  死循环：假设永远在过时  │         └──────────────────────┘ ``` Anthropic 的解法是：**不要设计\"今天最好的 Harness\"，而是设计\"未来也能用的接口\"**。  他们的思路借鉴了操作系统的设计哲学——操作系统能活几十年，靠的不是优化特定硬件，而是把硬件虚拟化成通用抽象（process、file），让还没被想出来的程序也能跑在上面。`read()` 不在乎你读的是 70 年代的磁盘还是今天的 SSD。  Managed Agents 也是这个思路：把 Agent 组件抽象为稳定接口，实现层可以随意替换。  ## 核心架构模式：解耦 Brain 和 Hands  ### 从 Pet 到 Cattle  A…\n- [s18] 挂了只是工具调用失败，不会导致整个会话丢失。  ### 3. Session 独立于上下文窗口 事件日志应该持久化且 append-only。Compaction 和 trimming 可以发生在 Harness 层，但原始数据永远可恢复。 ### 4. Token 不可达 结构性隔离比策略性隔离更可靠。Git Token 初始化注入、MCP Vault 代理——让 Agent 代码永远接触不到敏感凭证。  ### 5. 按需创建，不要预分配 TTFT 是用户最敏感的延迟指标。容器/沙箱仅在需要时启动，不要为每个 Session 预付初始化成本。  ### 最小化 Agent Harness 完整实现  ```python \"\"\" 最小化 Agent Harness 实现 展示 Session/Sandbox 接口和 Agent 循环的核心逻辑 \"\"\"  import time from …\n- [s30] xy signal 太多。拆小了再用。  **没有验证手段**——「写一篇好文章」。「好」没有客观标准，loop 永远不知道该停。  判断标准： **能用一条命令验证 done 还是 not done，就适合 loop；不能，就不适合。** ## 给 To B 产品团队的建议  **先建 Harness，再上 Loop。**  没有 Harness 做底座就上 Loop Engineering，等于让 Agent 在没有护栏的高速公路上自动驾驶。我在 [把 Bug Fix 变成 AI 训练数据：Harness Engineering 的飞轮效应](https://hugozhu.site/post/2026/239-harness-engineering-bug-fix-as-ai-training/) 中讨论过 Harness 的飞轮效应——好的 Harness 越用越聪明，知识会复利增…\n- [s16]         └────────────────────────────────┘               │ │                                                          │  │  \"Session 保证数据不丢，Harness 决定给 Claude 看什么\"      │ └──────────────────────────────────────────────────────────┘ ```  `getEvents()` 接口足够灵活：  - 从上次停止的位置继续读取 - 回溯几条事件，查看某个操作的前因后果 - 在执行关键动作前重新读取上下文  Harness 可以对取出的事件做任意转换——缓存优化以提高 prompt cache 命中率、选择性传递以节省 token——但 Session 保证原始数据永远可恢复…\n- [s24] 直在往上推。Daniel Demmel 在他那篇 [Feedback Loop Engineering](https://www.danieldemmel.me/blog/feedback-loop-engineering) 里总结了四层： ```text Prompt Engineering        — 你怎么问   < Context Engineering   — 你喂什么     < Feedback Loop Eng   — Agent 能不能自检       < Harness Eng       — Agent 在什么框架内运行 ```  这四层有一个共同特征： **人决定下一步做什么**。Prompt 层，人写指令；Context 层，人喂信息；Feedback Loop 层，人建验证工具；Harness 层，人设计 workflow。Agent 在人的框架内执行，不…\n## Sources\n\n论断编号 [cN] 对应上述文档；摘录编号 [sN] 为 chunk id。\n\n- de43b976f6666a44  Agent 的四个基本组件\n- 78d89a53782ce92b  五层演进\n\n> 由 `kc context` 生成（预算 5582/6000 字符）。\n"
+          }
+        },
+        "U2": {
+          "context": {
+            "elapsed": 2.53,
+            "chars": 5818,
+            "stats": {
+              "keywords": [
+                "VENTUNO",
+                "本地优先",
+                "Agent",
+                "Harness",
+                "设计",
+                "背景资料"
+              ],
+              "entities": 2,
+              "claims": 1,
+              "memories": 0,
+              "sources": 2,
+              "chars": 5818,
+              "max_chars": 6000
+            },
+            "facts_covered": [
+              "Agent = Model + Harness",
+              "Session",
+              "Sandbox",
+              "Token 不可达",
+              "Loop Engineering"
+            ],
+            "coverage": 0.833,
+            "pack": "# Task Context\n\n**任务**：为『在 VENTUNO Q 上设计一个本地优先的 Agent Harness』准备背景资料\n\n**关键词**：VENTUNO 本地优先 Agent Harness 设计 背景资料\n\n## 关键实体\n\n- Harness [technology]，2 docs\n- Agent [technology]，1 docs\n\n## 相关论断\n\n- [c1] [fact|0.95] Agent 系统由 Model、Harness、Session、Sandbox 四个组件构成，分别负责思考推理、循环控制与工具路由、持久化事件日志、代码执行与文件编辑网络请求。\n- [c2] [decision|0.95] 应设计未来也能用的接口，而非当下最优 Harness\n- [c3] [decision|0.95] Managed Agents 将 Agent 组件抽象为稳定接口，实现层可替换\n- [c4] [fact|0.95] Agent 的代码根本拿不到 Token 本身。\n- [c5] [fact|0.9] Harness Engineering 的核心公式是 Agent = Model + Harness，Harness 约束并放大 Model 的能力。\n- [c6] [fact|0.95] 生产级 Agent 不只是“调 API + 循环”，它至少包含四个独立组件。\n- [c7] [hypothesis|0.8] 新模型带来新行为，Harness 需要不断重新设计，形成假设永远在过时的死循环。\n- [c8] [fact|0.9] Harness 负责循环、路由和状态，提供 emitEvent() 和 wake(session) 接口。\n- [c9] [fact|0.95] Harness 对 OAuth Token 完全无感知。\n- [c10] [fact|0.95] Harness 对 OAuth Token 完全无感知\n- [c11] [fact|0.9] 解耦后 Harness 无状态，Sandbox 容器可随时替换\n- [c12] [hypothesis|0.7] 钉钉报销场景中 Agent 自主填表并校验提交\n\n## 原文摘录\n\n- [s2] e.\"*  Harness 编码了关于\"模型做不到什么\"的假设，而这些假设会随着模型能力提升而迅速过时。一个更有趣的推论是：**模型越强，Harness 的设计就越重要**——因为越强的模型需要越精密的控制结构，才能把能力转化为可靠的产出。 这篇文章从 Anthropic 的工程实践出发，拆解 Agent 架构的核心设计模式，以及\"面向未来的 Harness\"到底长什么样。  <!--more-->  ## Agent 的四个基本组件  先看 Agent 系统的全貌。一个生产级 Agent 不只是\"调 API + 循环\"，它至少包含四个独立组件：\n- [s1] --- title: \"Agent = Model + Harness：从 Anthropic Managed Agents 看 Agent 架构演进\" subtitle: \"Why Agent Architecture is About Stable Interfaces, Not Just Better Models\" date: 2026-04-16 tags: [\"ai-agents\", \"agent-loop\", \"system-architecture\", \"anthropic\", \"LLM\", \"managed-agents\", \"harness-design\", \"context-engineering\"] ingested: 2026-05-04 sha256: 374b09b9d7f02c46a23896db9ae86df37d21fb6a437d59900977631…\n- [s3] 的核心设计模式，以及\"面向未来的 Harness\"到底长什么样。  <!--more-->  ## Agent 的四个基本组件  先看 Agent 系统的全貌。一个生产级 Agent 不只是\"调 API + 循环\"，它至少包含四个独立组件： ``` ┌────────────────────────────────────────────────────────────┐ │                     Agent System                            │ │                                                             │ │  ┌─────────────┐   ┌────────────────┐   ┌───────────────┐  │ │  │   Session   │◄─▶…\n- [s22] ness 的假设会随着模型能力提升而过时——这不是 bug，是 feature。真正好的 Harness 设计不是优化今天的性能，而是定义一组足够通用的接口，让未来的模型、未来的 Harness 实现、未来的 Sandbox 都能无缝接入。 操作系统活了半个世纪，靠的不是优化某一代硬件，而是定义了 process 和 file 这样的通用抽象。Agent 架构要活到下一个模型迭代周期，也需要同样的设计哲学。  ---  **你怎么看？** 你在搭建 Agent 时遇到过\"模型升级导致 Harness 失效\"的情况吗？欢迎在评论区分享你的经验。你觉得 Agent 架构中最难设计的部分是 Model、Harness、Session 还是 Sandbox？\n- [s17] 95 TTFT | **↓ >90%** |  这个数据对自建 Agent 系统的人很有启发。用 E2B 或 Docker 搭建 Agent 时，常见的反模式是\"先启动容器，再调 API\"。正确的做法应该是\"先开始推理，需要时才启动容器\"。 ## Many Brains, Many Hands  解耦架构的另一个好处是可以扩展到\"多个 Brain\"和\"多个 Hands\"。  ### Many Brains  当 Harness 不再和容器耦合，Scale 多个 Brain 就只是启动多个无状态的 Harness 进程，按需连接到 Session。不同团队的 Agent 可以各自连接到自己 VPC 里的资源，不再需要网络对等连接。  ### Many Hands  Claude 需要推理多个执行环境，决定把工作分发到哪里——这比在单一 Shell 里操作更难。但解耦后，每个 Hand 都变成…\n- [s4]                 │  思考 · 推理 · 决策  │                    │ │                   └────────────────┘                        │  └────────────────────────────────────────────────────────────┘ ```  | 组件 | 职责 | 类比 | |------|------|------| | **Model** | 思考、推理、生成行动计划 | 大脑 | | **Harness** | 循环控制、工具路由、上下文管理 | 神经系统 | | **Session** | 持久化事件日志，append-only | 记忆体 | | **Sandbox** | 代码执行、文件编辑、网络请求 | 手脚 |  大多数人只关注 Model…\n- [s21]                 last_id = result_event.event_id  # 5. 模型表示完成，退出循环             if response.is_done:                 break def _build_prompt(self, events: list[Event]) -> list[dict[str, str]]:         \"\"\"将事件转换为模型 prompt——这里可以做缓存优化、选择性传递\"\"\"         messages: list[dict[str, str]] = []         for event in events:             if event.event_type == \"user_message\":                 messages.append({\"role…\n- [s7]         │ │  \"这是 cattle，死了一个，启动新的就行\"                      │ └──────────────────────────────────────────────────────┘ ``` Harness 变成了无状态的——因为它不持有会话状态，状态全在 Session 里。如果 Harness 崩溃，新的 Harness 用 `wake(sessionId)` 恢复，用 `getSession(id)` 读取事件日志，从中断处继续。  ### 三个核心接口  解耦后的架构靠三个接口运转：  ```python class Session(ABC):     \"\"\"持久化事件日志——不依赖任何 Model 或 Harness\"\"\"  @abstractmethod     def emit_event(self, session_id: …\n- [s24] 直在往上推。Daniel Demmel 在他那篇 [Feedback Loop Engineering](https://www.danieldemmel.me/blog/feedback-loop-engineering) 里总结了四层： ```text Prompt Engineering        — 你怎么问   < Context Engineering   — 你喂什么     < Feedback Loop Eng   — Agent 能不能自检       < Harness Eng       — Agent 在什么框架内运行 ```  这四层有一个共同特征： **人决定下一步做什么**。Prompt 层，人写指令；Context 层，人喂信息；Feedback Loop 层，人建验证工具；Harness 层，人设计 workflow。Agent 在人的框架内执行，不…\n- [s30] xy signal 太多。拆小了再用。  **没有验证手段**——「写一篇好文章」。「好」没有客观标准，loop 永远不知道该停。  判断标准： **能用一条命令验证 done 还是 not done，就适合 loop；不能，就不适合。** ## 给 To B 产品团队的建议  **先建 Harness，再上 Loop。**  没有 Harness 做底座就上 Loop Engineering，等于让 Agent 在没有护栏的高速公路上自动驾驶。我在 [把 Bug Fix 变成 AI 训练数据：Harness Engineering 的飞轮效应](https://hugozhu.site/post/2026/239-harness-engineering-bug-fix-as-ai-training/) 中讨论过 Harness 的飞轮效应——好的 Harness 越用越聪明，知识会复利增…\n- [s5]                        ▼         ┌──────────────────────┐         │  死循环：假设永远在过时  │         └──────────────────────┘ ``` Anthropic 的解法是：**不要设计\"今天最好的 Harness\"，而是设计\"未来也能用的接口\"**。  他们的思路借鉴了操作系统的设计哲学——操作系统能活几十年，靠的不是优化特定硬件，而是把硬件虚拟化成通用抽象（process、file），让还没被想出来的程序也能跑在上面。`read()` 不在乎你读的是 70 年代的磁盘还是今天的 SSD。  Managed Agents 也是这个思路：把 Agent 组件抽象为稳定接口，实现层可以随意替换。  ## 核心架构模式：解耦 Brain 和 Hands  ### 从 Pet 到 Cattle  A…\n- [s18] 挂了只是工具调用失败，不会导致整个会话丢失。  ### 3. Session 独立于上下文窗口 事件日志应该持久化且 append-only。Compaction 和 trimming 可以发生在 Harness 层，但原始数据永远可恢复。 ### 4. Token 不可达 结构性隔离比策略性隔离更可靠。Git Token 初始化注入、MCP Vault 代理——让 Agent 代码永远接触不到敏感凭证。  ### 5. 按需创建，不要预分配 TTFT 是用户最敏感的延迟指标。容器/沙箱仅在需要时启动，不要为每个 Session 预付初始化成本。  ### 最小化 Agent Harness 完整实现  ```python \"\"\" 最小化 Agent Harness 实现 展示 Session/Sandbox 接口和 Agent 循环的核心逻辑 \"\"\"  import time from …\n## Sources\n\n论断编号 [cN] 对应上述文档；摘录编号 [sN] 为 chunk id。\n\n- de43b976f6666a44  Agent 的四个基本组件\n- 78d89a53782ce92b  五层演进\n\n> 由 `kc context` 生成（预算 5667/6000 字符）。\n"
+          }
+        }
+      }
+    },
+    {
+      "id": "S13",
+      "category": "negative",
+      "query": "如何用 Airflow 配置 DAG 的调度重试策略？",
+      "arms": {
+        "U1": {
+          "ask": {
+            "answer": "资料中未提及 Airflow 配置 DAG 的调度重试策略，无法回答。",
+            "elapsed": 3.68,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44"
+            ],
+            "declined_det": true,
+            "judge": {
+              "declined": true,
+              "hallucinated": false
+            }
+          }
+        },
+        "U2": {
+          "ask": {
+            "answer": "资料中没有关于 Airflow 或 DAG 调度重试策略的任何内容。提供的 6 段资料 [1]–[6] 均围绕 Agent 的四个基本组件、Git Token 初始化注入、MCP + Vault 凭证代理等主题展开，未涉及 Airflow 的 DAG 配置。\n\n因此无法依据现有资料回答该问题。如需 Airflow 重试策略（如 `retries`、`retry_delay`、`retry_exponential_backoff`、`max_retry_delay` 等参数）的说明，建议查阅 Airflow 官方文档或相关专门资料。",
+            "elapsed": 4.38,
+            "sources": [
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44"
+            ],
+            "declined_det": true,
+            "judge": {
+              "declined": true,
+              "hallucinated": false
+            }
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "资料中没有关于 Airflow 或 DAG 调度重试策略的任何内容。\n\n现有两份文档分别讨论的是 Agent 架构（Model + Harness，文档A）和 Loop Engineering（文档B），均未涉及 Airflow 的配置方法。无法据此回答该问题，建议查阅 Airflow 官方文档。",
+            "elapsed": 1.7,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "declined_det": true,
+            "judge": {
+              "declined": true,
+              "hallucinated": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "S14",
+      "category": "negative",
+      "query": "Transformer 多头注意力机制的计算复杂度是 O(n²·d) 吗？",
+      "arms": {
+        "U1": {
+          "ask": {
+            "answer": "没有。所提供的资料未提及Transformer多头注意力机制的计算复杂度，无法判断其是否为O(n²·d) [无相关资料]。",
+            "elapsed": 5.14,
+            "sources": [
+              "78d89a53782ce92b",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "de43b976f6666a44"
+            ],
+            "declined_det": true,
+            "judge": {
+              "declined": true,
+              "hallucinated": false
+            }
+          }
+        },
+        "U2": {
+          "ask": {
+            "answer": "资料中没有关于 Transformer 多头注意力机制或计算复杂度的任何内容，无法据此回答该问题 [1][2][3][4][5][6]。建议查阅相关的模型架构资料。",
+            "elapsed": 4.07,
+            "sources": [
+              "de43b976f6666a44",
+              "78d89a53782ce92b",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44",
+              "de43b976f6666a44"
+            ],
+            "declined_det": true,
+            "judge": {
+              "declined": true,
+              "hallucinated": false
+            }
+          }
+        },
+        "U3": {
+          "ask": {
+            "answer": "资料中没有关于 Transformer 多头注意力计算复杂度的内容，无法据此回答。",
+            "elapsed": 1.19,
+            "sources": [
+              "raw A+B"
+            ],
+            "error": null,
+            "declined_det": true,
+            "judge": {
+              "declined": true,
+              "hallucinated": false
+            }
+          }
+        }
+      }
+    }
+  ]
+}

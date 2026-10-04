@@ -1,0 +1,152 @@
+{
+  "meta": {
+    "docs": {
+      "A": "de43b976f6666a44",
+      "B": "78d89a53782ce92b"
+    },
+    "categories": ["exact_search", "semantic", "entity", "cross_doc", "fact", "multihop", "context", "negative"],
+    "legend": "expected_doc_ids: 检索应命中的文档; expected_facts: 答案应覆盖的关键事实; type: 适用评测动作"
+  },
+  "cases": [
+    {
+      "id": "S01",
+      "category": "exact_search",
+      "type": ["retrieval", "ask"],
+      "query": "Codex 的 /goal 有哪五个状态？",
+      "expected_doc_ids": ["78d89a53782ce92b"],
+      "expected_facts": ["pursuing", "paused", "achieved", "unmet", "budget-limited"],
+      "gold_answer": "五个状态是 pursuing（执行中）、paused（暂停）、achieved（达成）、unmet（未达成）、budget-limited（预算耗尽）。",
+      "note": "专有名词/枚举，测 FTS 精确命中"
+    },
+    {
+      "id": "S02",
+      "category": "exact_search",
+      "type": ["retrieval", "ask"],
+      "query": "Anthropic Managed Agents 解耦后的三个核心接口是什么？",
+      "expected_doc_ids": ["de43b976f6666a44"],
+      "expected_facts": ["Session", "Sandbox", "Harness"],
+      "gold_answer": "三个接口是 Session（持久化事件日志）、Sandbox（执行环境，execute()）、AgentHarness（Agent 循环控制）。",
+      "note": "接口枚举"
+    },
+    {
+      "id": "S03",
+      "category": "semantic",
+      "type": ["retrieval", "ask"],
+      "query": "为什么针对旧模型写的 workaround 最终会变成死代码？",
+      "expected_doc_ids": ["de43b976f6666a44"],
+      "expected_facts": ["Harness 编码了关于模型做不到什么的假设", "模型能力提升后假设过时", "context reset", "Sonnet 4.5", "Opus 4.5"],
+      "gold_answer": "因为 Harness 编码了「模型做不到什么」的假设；模型能力提升后这些假设过时，workaround 变成死代码。典型例子是针对 Claude Sonnet 4.5 的 context anxiety 而加的 context reset，到了 Opus 4.5 就失效了。",
+      "note": "无字面关键词，测语义检索/向量通道"
+    },
+    {
+      "id": "S04",
+      "category": "semantic",
+      "type": ["retrieval", "ask"],
+      "query": "Agent 长时间自主运行会出现哪两个致命问题？",
+      "expected_doc_ids": ["78d89a53782ce92b"],
+      "expected_facts": ["context rot", "goal drift", "fresh context per iteration"],
+      "gold_answer": "context rot（上下文腐烂，历史信息太多导致精度下降）和 goal drift（目标漂移，跑着跑着解决了略不同的问题）。对策是每轮用 fresh context。",
+      "note": "术语语义检索"
+    },
+    {
+      "id": "S05",
+      "category": "entity",
+      "type": ["retrieval", "ask"],
+      "query": "设计 Agent Harness 的五个原则是什么？",
+      "expected_doc_ids": ["de43b976f6666a44"],
+      "expected_facts": ["接口稳定，实现可变", "Brain 和 Hands 解耦", "Session 独立于上下文窗口", "Token 不可达", "按需创建，不要预分配"],
+      "gold_answer": "1) 接口稳定、实现可变；2) Brain 和 Hands 解耦；3) Session 独立于上下文窗口；4) Token 不可达（结构性隔离）；5) 按需创建、不要预分配。",
+      "note": "实体/列表召回"
+    },
+    {
+      "id": "S06",
+      "category": "entity",
+      "type": ["retrieval", "ask"],
+      "query": "Ralph Loop 的核心观点是谁提出的？原话大意是什么？",
+      "expected_doc_ids": ["78d89a53782ce92b"],
+      "expected_facts": ["Geoffrey Huntley", "loop 的智能在 loop 里而不是 agent 里", "agent 是可替换的"],
+      "gold_answer": "Geoffrey Huntley 提出。核心观点：循环的智能在 loop 本身，而不在 agent；agent 是可替换的，是 loop 赋予了自主性。",
+      "note": "人名 + 观点，偏 FTS/实体"
+    },
+    {
+      "id": "S07",
+      "category": "cross_doc",
+      "type": ["retrieval", "ask"],
+      "query": "Loop Engineering 和 Harness Engineering 是什么关系？",
+      "expected_doc_ids": ["de43b976f6666a44", "78d89a53782ce92b"],
+      "expected_facts": ["Loop 在 Harness 之上加一层自治", "好的 Loop 需要好的 Harness 做底座", "Harness 模式人编排 workflow", "Loop 模式 Agent 根据当前状态自己决定下一步"],
+      "gold_answer": "Loop 不是替代 Harness，而是在 Harness 之上加一层自治。好的 Loop 需要好的 Harness 做底座。区别在于谁决定下一步：Harness 模式下人编排 workflow，Loop 模式下 Agent 根据当前状态自己决定。",
+      "note": "跨两篇综合，必须同时命中 A、B"
+    },
+    {
+      "id": "S08",
+      "category": "cross_doc",
+      "type": ["retrieval", "ask"],
+      "query": "Agent = Model + Harness 公式与 Loop Engineering 如何互相补充？",
+      "expected_doc_ids": ["de43b976f6666a44", "78d89a53782ce92b"],
+      "expected_facts": ["Model 负责思考推理决策", "Harness 负责循环控制、工具路由、状态管理", "Harness 约束并放大 Model 的能力", "Loop 由人定义终点线和预算", "Agent 自己找路跑到终点"],
+      "gold_answer": "Harness 公式指出 Model 负责思考/推理/决策，Harness 负责循环控制/工具路由/状态管理，Harness 约束并放大 Model。Loop 在此之上加一层自治：人只定义终点线（/goal）和预算，Agent 自己找路跑到终点。",
+      "note": "跨文档概念综合"
+    },
+    {
+      "id": "S09",
+      "category": "fact",
+      "type": ["retrieval", "ask"],
+      "query": "解耦 Harness 和 Sandbox 后，TTFT 指标改善了多少？",
+      "expected_doc_ids": ["de43b976f6666a44"],
+      "expected_facts": ["p50 TTFT 下降约 60%", "p95 TTFT 下降超过 90%", "按需创建容器"],
+      "gold_answer": "p50 TTFT 下降约 60%，p95 TTFT 下降超过 90%。原因是容器按需创建，而不是每个 Session 预分配。",
+      "note": "数字事实，测精确性"
+    },
+    {
+      "id": "S10",
+      "category": "fact",
+      "type": ["retrieval", "ask"],
+      "query": "钉钉差旅报销 Loop 案例的投入产出比是多少？",
+      "expected_doc_ids": ["78d89a53782ce92b"],
+      "expected_facts": ["约 200k tokens", "¥1.2", "¥25", "约 20 倍回报"],
+      "gold_answer": "约花 ¥1.2（约 200k tokens）换来约 ¥25 的价值，约 20 倍回报。",
+      "note": "数字事实"
+    },
+    {
+      "id": "S11",
+      "category": "multihop",
+      "type": ["retrieval", "ask"],
+      "query": "Codex 用什么机制防止 proxy signal collapse？",
+      "expected_doc_ids": ["78d89a53782ce92b"],
+      "expected_facts": ["continuation.md 模板", "必须 inspect actual files / run actual tests / verify actual output", "update_goal 是结构化 tool call", "只有每项直接验证通过才 update_goal(achieved)"],
+      "gold_answer": "用 continuation.md 模板每轮注入规则：不接受 proxy signal、必须 inspect 真实文件、run 真实测试、verify 真实输出；只有每个 checklist 项都通过直接验证才调用 update_goal(achieved)，且 update_goal 是结构化 tool call 而非文本声明。",
+      "note": "多跳：需要从 proxy signal 段落到 continuation.md / update_goal"
+    },
+    {
+      "id": "S12",
+      "category": "context",
+      "type": ["context"],
+      "query": "为『在 VENTUNO Q 上设计一个本地优先的 Agent Harness』准备背景资料",
+      "expected_doc_ids": ["de43b976f6666a44", "78d89a53782ce92b"],
+      "expected_facts": ["Agent = Model + Harness", "Session", "Sandbox", "Token 不可达", "Loop Engineering", "fresh context"],
+      "gold_answer": "Context Pack 应包含 Harness 四组件（Model/Harness/Session/Sandbox）、稳定接口与 Token 不可达原则，以及 Loop Engineering 的自治层与 fresh context。",
+      "note": "测 context builder：预算内是否含关键实体/论断"
+    },
+    {
+      "id": "S13",
+      "category": "negative",
+      "type": ["retrieval", "ask"],
+      "query": "如何用 Airflow 配置 DAG 的调度重试策略？",
+      "expected_doc_ids": [],
+      "expected_facts": [],
+      "gold_answer": "知识库中没有相关内容，应明确说明无法回答（不得编造 Airflow 用法）。",
+      "note": "负样本：防幻觉"
+    },
+    {
+      "id": "S14",
+      "category": "negative",
+      "type": ["retrieval", "ask"],
+      "query": "Transformer 多头注意力机制的计算复杂度是 O(n²·d) 吗？",
+      "expected_doc_ids": [],
+      "expected_facts": [],
+      "gold_answer": "知识库中没有相关内容，应明确说明无法回答（不得编造）。",
+      "note": "负样本：防幻觉（相关领域但语料未涉及）"
+    }
+  ]
+}
