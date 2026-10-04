@@ -201,3 +201,7 @@ knowledge-compiler/
 ## 相关项目
 
 - [`qwen-server`](../qwen-server) — 把 NPU 上的 Qwen3 封装为 OpenAI 兼容服务（本项目的 LLM 后端）
+
+## License
+
+[MIT](LICENSE) © 2026 hugozhu
